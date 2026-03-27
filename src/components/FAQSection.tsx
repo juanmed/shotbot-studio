@@ -78,6 +78,25 @@ const FAQSection = () => {
             <FAQItem key={i} question={faq.q} answer={faq.a} index={i} />
           ))}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center mt-14"
+        >
+          <p className="font-body text-sm text-muted-foreground mb-5">
+            {t("faq.stillQuestions")}
+          </p>
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 px-8 py-3.5 border border-foreground/20 text-foreground font-display font-700 text-[11px] tracking-[0.2em] uppercase hover:bg-foreground hover:text-background transition-all duration-300"
+          >
+            {t("cta.primary")}
+          </a>
+        </motion.div>
       </div>
     </section>
   );
