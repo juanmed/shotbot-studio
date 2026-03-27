@@ -13,6 +13,8 @@ export const SITE_CONFIG = {
     phone: "+82 10-0000-0000",
     instagram: "https://instagram.com/shotbot",
     tiktok: "https://tiktok.com/@shotbot",
+    kakao: "https://open.kakao.com/o/shotbot",
+    whatsapp: "https://wa.me/821000000000",
   },
   cta: {
     primaryKey: "cta.primary",
