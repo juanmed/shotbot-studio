@@ -314,5 +314,3 @@ export const useI18n = (): I18nContextType => {
   const context = useContext(I18nContext);
   return context ?? fallbackValue;
 };
-  return context;
-};
