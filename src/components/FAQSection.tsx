@@ -17,26 +17,28 @@ const FAQItem = ({ question, answer, index }: FAQItemProps) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-30px" }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
-      className="border-b border-border"
+      transition={{ duration: 0.6, delay: index * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
+      className="border-b border-border group"
     >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-6 text-left group"
+        className="w-full flex items-center justify-between py-6 text-left"
       >
-        <span className="font-display text-base md:text-lg font-600 text-foreground pr-4 group-hover:text-foreground/80 transition-colors">
+        <span className="font-display text-base md:text-lg font-600 text-foreground pr-4 group-hover:text-foreground/80 transition-colors duration-300">
           {question}
         </span>
         <ChevronDown
-          className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-muted-foreground shrink-0 transition-all duration-400 ease-out ${open ? "rotate-180 text-foreground" : ""}`}
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ${open ? "max-h-40 pb-6" : "max-h-0"}`}
+        className={`grid transition-all duration-400 ease-out ${open ? "grid-rows-[1fr] pb-6 opacity-100" : "grid-rows-[0fr] opacity-0"}`}
       >
-        <p className="font-body text-sm text-muted-foreground leading-relaxed pr-8">
-          {answer}
-        </p>
+        <div className="overflow-hidden">
+          <p className="font-body text-sm text-muted-foreground leading-relaxed pr-8">
+            {answer}
+          </p>
+        </div>
       </div>
     </motion.div>
   );
@@ -60,7 +62,7 @@ const FAQSection = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center mb-16"
         >
           <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">

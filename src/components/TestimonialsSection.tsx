@@ -2,6 +2,17 @@ import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { Quote } from "lucide-react";
 
+const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: i * 0.12, ease: EASE },
+  }),
+};
+
 const TestimonialsSection = () => {
   const { t } = useI18n();
 
@@ -19,7 +30,7 @@ const TestimonialsSection = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center mb-20"
         >
           <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">
@@ -34,13 +45,14 @@ const TestimonialsSection = () => {
           {testimonials.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              custom={i}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: i * 0.12 }}
-              className="bg-card-gradient border border-border p-8 flex flex-col"
+              className="bg-card-gradient border border-border p-8 flex flex-col group hover:border-foreground/10 transition-colors duration-500"
             >
-              <Quote className="w-5 h-5 text-muted-foreground/30 mb-6" />
+              <Quote className="w-5 h-5 text-muted-foreground/20 mb-6 group-hover:text-muted-foreground/40 transition-colors duration-500" />
               <p className="font-body text-foreground/90 leading-relaxed flex-1 text-sm">
                 "{t(item.quoteKey)}"
               </p>
