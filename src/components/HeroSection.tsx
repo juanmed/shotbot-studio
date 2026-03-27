@@ -16,8 +16,8 @@ const HeroSection = () => {
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-background/70" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
+        <div className="absolute inset-0 bg-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
       </div>
 
       <div className="relative z-10 text-center px-6 max-w-5xl">
@@ -25,7 +25,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="font-body text-sm tracking-[0.3em] uppercase text-primary mb-6"
+          className="font-body text-xs tracking-[0.4em] uppercase text-muted-foreground mb-8"
         >
           {t("brand.tagline")}
         </motion.p>
@@ -34,31 +34,41 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 1 }}
-          className="font-display text-6xl md:text-8xl lg:text-9xl font-800 tracking-tighter leading-[0.9]"
+          className="font-display text-5xl md:text-8xl lg:text-9xl font-800 tracking-tighter leading-[0.9]"
         >
           <span className="text-foreground">{t("hero.line1")}</span>
           <br />
-          <span className="text-gradient-gold">{t("hero.line2")}</span>
+          <span className="text-gradient-chrome">{t("hero.line2")}</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 1 }}
-          className="font-body text-lg md:text-xl text-muted-foreground mt-8 max-w-2xl mx-auto"
+          className="font-body text-base md:text-lg text-muted-foreground mt-8 max-w-xl mx-auto leading-relaxed"
         >
           {t("hero.description")}
         </motion.p>
 
-        <motion.a
-          href="#contact"
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.6 }}
-          className="inline-block mt-10 px-8 py-4 bg-primary text-primary-foreground font-display font-700 text-sm tracking-widest uppercase hover:opacity-90 transition-opacity"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12"
         >
-          {t("hero.cta")}
-        </motion.a>
+          <a
+            href="#contact"
+            className="px-10 py-4 bg-foreground text-background font-display font-700 text-xs tracking-[0.2em] uppercase hover:bg-foreground/90 transition-colors duration-300"
+          >
+            {t("hero.cta")}
+          </a>
+          <a
+            href="#portfolio"
+            className="px-10 py-4 border border-border text-foreground font-display font-700 text-xs tracking-[0.2em] uppercase hover:border-foreground/30 transition-colors duration-300"
+          >
+            {t("cta.secondary")}
+          </a>
+        </motion.div>
       </div>
 
       <motion.div
@@ -67,11 +77,11 @@ const HeroSection = () => {
         transition={{ delay: 2, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="font-body text-xs tracking-widest uppercase text-muted-foreground">{t("hero.scroll")}</span>
+        <span className="font-body text-[10px] tracking-[0.3em] uppercase text-muted-foreground">{t("hero.scroll")}</span>
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={{ y: [0, 6, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
-          className="w-px h-8 bg-primary/50"
+          className="w-px h-6 bg-foreground/20"
         />
       </motion.div>
     </section>

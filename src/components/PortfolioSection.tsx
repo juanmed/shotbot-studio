@@ -9,58 +9,38 @@ const PortfolioSection = () => {
   const { t } = useI18n();
 
   const portfolioItems = [
-    {
-      image: portfolio1,
-      title: t("portfolio.fashion.title"),
-      category: t("portfolio.fashion.category"),
-      alt: "Fashion event robotic photography",
-    },
-    {
-      image: portfolio2,
-      title: t("portfolio.club.title"),
-      category: t("portfolio.club.category"),
-      alt: "Nightclub event photography",
-    },
-    {
-      image: portfolio3,
-      title: t("portfolio.wedding.title"),
-      category: t("portfolio.wedding.category"),
-      alt: "Wedding cinematic capture",
-    },
-    {
-      image: portfolio4,
-      title: t("portfolio.corporate.title"),
-      category: t("portfolio.corporate.category"),
-      alt: "Corporate event filming",
-    },
+    { image: portfolio1, titleKey: "portfolio.fashion.title", categoryKey: "portfolio.fashion.category", alt: "Fashion event robotic photography" },
+    { image: portfolio2, titleKey: "portfolio.club.title", categoryKey: "portfolio.club.category", alt: "Nightclub event photography" },
+    { image: portfolio3, titleKey: "portfolio.wedding.title", categoryKey: "portfolio.wedding.category", alt: "Wedding cinematic capture" },
+    { image: portfolio4, titleKey: "portfolio.corporate.title", categoryKey: "portfolio.corporate.category", alt: "Corporate event filming" },
   ];
 
   return (
-    <section id="portfolio" className="py-32 px-6">
+    <section id="portfolio" className="section-py px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="mb-16"
+          className="text-center mb-16"
         >
-          <p className="font-body text-sm tracking-[0.3em] uppercase text-primary mb-4">
+          <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">
             {t("portfolio.subtitle")}
           </p>
-          <h2 className="font-display text-4xl md:text-6xl font-800 tracking-tight">
+          <h2 className="font-display text-4xl md:text-6xl font-800 tracking-tight text-foreground">
             {t("portfolio.title")}
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {portfolioItems.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.7, delay: i * 0.1 }}
+              transition={{ duration: 0.7, delay: i * 0.08 }}
               className="group relative aspect-[4/5] overflow-hidden cursor-pointer"
             >
               <img
@@ -71,13 +51,13 @@ const PortfolioSection = () => {
                 height={1000}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <p className="font-body text-xs tracking-[0.2em] uppercase text-primary mb-2">
-                  {item.category}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                <p className="font-body text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-2">
+                  {t(item.categoryKey)}
                 </p>
-                <h3 className="font-display text-xl md:text-2xl font-700 text-foreground translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  {item.title}
+                <h3 className="font-display text-lg md:text-xl font-700 text-foreground">
+                  {t(item.titleKey)}
                 </h3>
               </div>
             </motion.div>

@@ -1,9 +1,12 @@
-import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/constants";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import RobotArmSection from "@/components/RobotArmSection";
 import ServiceSection from "@/components/ServiceSection";
 import PortfolioSection from "@/components/PortfolioSection";
+import PerfectForSection from "@/components/PerfectForSection";
+import HowItWorksSection from "@/components/HowItWorksSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import FAQSection from "@/components/FAQSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
@@ -15,6 +18,10 @@ const Index = () => {
       <RobotArmSection />
       <ServiceSection />
       <PortfolioSection />
+      <PerfectForSection />
+      <HowItWorksSection />
+      <TestimonialsSection />
+      <FAQSection />
       <ContactSection />
       <Footer />
     </main>

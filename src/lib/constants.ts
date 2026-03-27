@@ -1,4 +1,21 @@
-// Brand name - change this to update everywhere
+// ==========================================
+// Site Configuration — Change here to update everywhere
+// ==========================================
+
 export const BRAND_NAME = "Shotbot";
-export const BRAND_TAGLINE = "The future of event photography";
-export const BRAND_DESCRIPTION = "A cinematic robotic arm that captures stunning videos and photos of you — creating jaw-dropping content at any event.";
+
+export const SITE_CONFIG = {
+  brand: BRAND_NAME,
+  taglineKey: "brand.tagline",
+  descriptionKey: "brand.description",
+  contact: {
+    email: "hello@shotbot.co",
+    phone: "+82 10-0000-0000",
+    instagram: "https://instagram.com/shotbot",
+    tiktok: "https://tiktok.com/@shotbot",
+  },
+  cta: {
+    primaryKey: "cta.primary",
+    secondaryKey: "cta.secondary",
+  },
+} as const;
