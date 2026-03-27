@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Instagram, MessageCircle, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { BRAND_NAME, SITE_CONFIG } from "@/lib/constants";
+import { QUICK_CONTACT_LINKS, EVENT_TYPES } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 
@@ -35,33 +36,6 @@ const ContactSection = () => {
 
   const inputClasses =
     "w-full bg-transparent border-b border-border px-0 py-4 font-body text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-foreground/30 transition-colors duration-300";
-
-  const quickLinks = [
-    {
-      icon: Instagram,
-      labelKey: "contact.quickInstagram",
-      href: SITE_CONFIG.contact.instagram,
-      external: true,
-    },
-    {
-      icon: MessageCircle,
-      labelKey: "contact.quickKakao",
-      href: SITE_CONFIG.contact.kakao,
-      external: true,
-    },
-    {
-      icon: MessageCircle,
-      labelKey: "contact.quickWhatsapp",
-      href: SITE_CONFIG.contact.whatsapp,
-      external: true,
-    },
-    {
-      icon: Mail,
-      labelKey: "contact.quickEmail",
-      href: `mailto:${SITE_CONFIG.contact.email}`,
-      external: false,
-    },
-  ];
 
   return (
     <section id="contact" className="section-py px-6 relative">
@@ -115,14 +89,7 @@ const ContactSection = () => {
                   <button
                     onClick={() => {
                       setSubmitted(false);
-                      setFormData({
-                        name: "",
-                        emailOrPhone: "",
-                        eventType: "",
-                        date: "",
-                        location: "",
-                        message: "",
-                      });
+                      setFormData({ name: "", emailOrPhone: "", eventType: "", date: "", location: "", message: "" });
                     }}
                     className="mt-8 font-body text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground border-b border-border hover:border-foreground/30 pb-1 transition-colors"
                   >
@@ -167,12 +134,11 @@ const ContactSection = () => {
                     <option value="" disabled>
                       {t("contact.eventType")}
                     </option>
-                    <option value="wedding">{t("contact.eventWedding")}</option>
-                    <option value="corporate">{t("contact.eventCorporate")}</option>
-                    <option value="party">{t("contact.eventParty")}</option>
-                    <option value="brand">{t("contact.eventBrand")}</option>
-                    <option value="nightlife">{t("contact.eventNightlife")}</option>
-                    <option value="other">{t("contact.eventOther")}</option>
+                    {EVENT_TYPES.map((et) => (
+                      <option key={et.value} value={et.value}>
+                        {t(et.labelKey)}
+                      </option>
+                    ))}
                   </select>
                   <input
                     type="date"
@@ -230,7 +196,7 @@ const ContactSection = () => {
               {t("contact.quickTitle")}
             </p>
             <div className="flex flex-col gap-3">
-              {quickLinks.map((link) => (
+              {QUICK_CONTACT_LINKS.map((link) => (
                 <a
                   key={link.labelKey}
                   href={link.href}

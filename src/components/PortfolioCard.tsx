@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
-import type { PortfolioItem } from "@/lib/portfolioData";
+import type { PortfolioItem } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 
 interface PortfolioCardProps {

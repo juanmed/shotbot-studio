@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
+import { FAQ_ITEMS } from "@/lib/siteData";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -9,7 +10,7 @@ interface FAQItemProps {
   index: number;
 }
 
-const FAQItem = ({ question, answer, index }: FAQItemProps) => {
+const FAQItemComponent = ({ question, answer, index }: FAQItemProps) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -47,14 +48,6 @@ const FAQItem = ({ question, answer, index }: FAQItemProps) => {
 const FAQSection = () => {
   const { t } = useI18n();
 
-  const faqs = [
-    { q: t("faq.q1"), a: t("faq.a1") },
-    { q: t("faq.q2"), a: t("faq.a2") },
-    { q: t("faq.q3"), a: t("faq.a3") },
-    { q: t("faq.q4"), a: t("faq.a4") },
-    { q: t("faq.q5"), a: t("faq.a5") },
-  ];
-
   return (
     <section id="faq" className="section-py px-6">
       <div className="max-w-3xl mx-auto">
@@ -74,12 +67,11 @@ const FAQSection = () => {
         </motion.div>
 
         <div className="border-t border-border">
-          {faqs.map((faq, i) => (
-            <FAQItem key={i} question={faq.q} answer={faq.a} index={i} />
+          {FAQ_ITEMS.map((faq, i) => (
+            <FAQItemComponent key={i} question={t(faq.questionKey)} answer={t(faq.answerKey)} index={i} />
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
-import { PORTFOLIO_ITEMS, PORTFOLIO_CATEGORIES, type PortfolioCategory } from "@/lib/portfolioData";
+import { PORTFOLIO_ITEMS, PORTFOLIO_CATEGORIES, type PortfolioCategory } from "@/lib/siteData";
 import PortfolioCard from "@/components/PortfolioCard";
 import PortfolioLightbox from "@/components/PortfolioLightbox";
 
@@ -27,7 +27,6 @@ const PortfolioSection = () => {
   return (
     <section id="portfolio" className="section-py px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -43,7 +42,6 @@ const PortfolioSection = () => {
           </h2>
         </motion.div>
 
-        {/* Filters */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -66,21 +64,15 @@ const PortfolioSection = () => {
           ))}
         </motion.div>
 
-        {/* Masonry-style grid */}
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-2 md:gap-3 space-y-2 md:space-y-3">
           {filtered.map((item, i) => (
             <div key={item.id} className="break-inside-avoid">
-              <PortfolioCard
-                item={item}
-                index={i}
-                onClick={() => openLightbox(i)}
-              />
+              <PortfolioCard item={item} index={i} onClick={() => openLightbox(i)} />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Lightbox */}
       <PortfolioLightbox
         items={filtered}
         activeIndex={lightboxIndex}

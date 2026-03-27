@@ -1,16 +1,9 @@
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
+import { SERVICE_VALUES } from "@/lib/siteData";
 
 const ServiceSection = () => {
   const { t } = useI18n();
-
-  const values = [
-    { titleKey: "service.v1Title", descKey: "service.v1Desc" },
-    { titleKey: "service.v2Title", descKey: "service.v2Desc" },
-    { titleKey: "service.v3Title", descKey: "service.v3Desc" },
-    { titleKey: "service.v4Title", descKey: "service.v4Desc" },
-    { titleKey: "service.v5Title", descKey: "service.v5Desc" },
-  ];
 
   return (
     <section id="service" className="section-py px-6 relative">
@@ -36,7 +29,7 @@ const ServiceSection = () => {
         </motion.div>
 
         <div className="space-y-0">
-          {values.map((item, i) => (
+          {SERVICE_VALUES.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}

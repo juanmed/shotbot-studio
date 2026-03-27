@@ -1,14 +1,9 @@
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
+import { PROCESS_STEPS } from "@/lib/siteData";
 
 const HowItWorksSection = () => {
   const { t } = useI18n();
-
-  const steps = [
-    { num: "01", titleKey: "howItWorks.step1Title", descKey: "howItWorks.step1Desc" },
-    { num: "02", titleKey: "howItWorks.step2Title", descKey: "howItWorks.step2Desc" },
-    { num: "03", titleKey: "howItWorks.step3Title", descKey: "howItWorks.step3Desc" },
-  ];
 
   return (
     <section className="section-py px-6 relative">
@@ -30,7 +25,7 @@ const HowItWorksSection = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-border">
-          {steps.map((step, i) => (
+          {PROCESS_STEPS.map((step, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 24 }}

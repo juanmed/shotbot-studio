@@ -1,14 +1,6 @@
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
-
-const OCCASIONS = [
-  "perfectFor.wedding",
-  "perfectFor.brand",
-  "perfectFor.launch",
-  "perfectFor.party",
-  "perfectFor.vip",
-  "perfectFor.corporate",
-] as const;
+import { OCCASION_KEYS } from "@/lib/siteData";
 
 const PerfectForSection = () => {
   const { t } = useI18n();
@@ -31,7 +23,6 @@ const PerfectForSection = () => {
           </h2>
         </motion.div>
 
-        {/* Minimal tag cloud */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -39,7 +30,7 @@ const PerfectForSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-wrap items-center justify-center gap-3 md:gap-4"
         >
-          {OCCASIONS.map((key, i) => (
+          {OCCASION_KEYS.map((key, i) => (
             <motion.span
               key={key}
               initial={{ opacity: 0, y: 12 }}
