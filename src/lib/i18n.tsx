@@ -21,12 +21,13 @@ const translations: Record<Locale, Translations> = {
     "nav.contact": "문의하기",
 
     // Hero
-    "hero.line1": "당신의 순간을",
-    "hero.line2": "완벽하게.",
-    "hero.description": "시네마틱 로봇 팔이 당신을 중심으로 공전하며 — 시선을 사로잡는 슬로우 모션 영상을 촬영합니다.",
+    "hero.line1": "당신이 주인공인",
+    "hero.line2": "그 순간.",
+    "hero.description": "로봇 카메라 팔이 당신을 중심으로 공전하며 — 잊을 수 없는 시네마틱 영상을 만들어냅니다.",
     "hero.cta": "예약 문의",
     "hero.scroll": "스크롤",
     "hero.imgAlt": "화려한 이벤트 현장",
+    "hero.microcopy": "무료 상담 · 맞춤 견적 · 24시간 내 응답",
 
     // Robot Arm scroll showcase
     "arm.precision": "정밀함",
@@ -155,12 +156,13 @@ const translations: Record<Locale, Translations> = {
     "nav.contact": "Contact",
 
     // Hero
-    "hero.line1": "YOUR MOMENT.",
-    "hero.line2": "PERFECTED.",
-    "hero.description": "A cinematic robotic arm that orbits around you — capturing stunning slow-motion videos that turn heads.",
+    "hero.line1": "THE MOMENT",
+    "hero.line2": "IS YOURS.",
+    "hero.description": "A robotic camera arm orbits around you — creating cinematic slow-motion content that stops the scroll.",
     "hero.cta": "Book Now",
     "hero.scroll": "Scroll",
     "hero.imgAlt": "Glamorous event scene",
+    "hero.microcopy": "Free consultation · Custom quote · 24h response",
 
     // Robot Arm scroll showcase
     "arm.precision": "PRECISION",
