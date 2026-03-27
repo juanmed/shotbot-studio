@@ -1,7 +1,10 @@
 import { BRAND_NAME } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 import { Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
+  const { t } = useI18n();
+
   return (
     <footer className="border-t border-border py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
@@ -17,7 +20,7 @@ const Footer = () => {
           </a>
         </div>
         <p className="font-body text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {BRAND_NAME}. All rights reserved.
+          © {new Date().getFullYear()} {BRAND_NAME}. {t("footer.rights")}
         </p>
       </div>
     </footer>
