@@ -29,14 +29,15 @@ const translations: Record<Locale, Translations> = {
     "hero.imgAlt": "화려한 이벤트 현장",
     "hero.microcopy": "무료 상담 · 맞춤 견적 · 24시간 내 응답",
 
-    // Robot Arm scroll showcase
-    "arm.precision": "정밀함",
-    "arm.precisionDesc": "6축 로봇이 손으로는 불가능한 카메라 앵글을 구현합니다",
-    "arm.cinematic": "시네마틱",
-    "arm.cinematicDesc": "할리우드급 슬로우 모션 & 궤도 트래킹 촬영",
-    "arm.starMoment": "당신의",
-    "arm.starMomentHighlight": "스타",
-    "arm.starMomentEnd": "순간",
+    // Scroll showcase
+    "showcase.phase1Title": "시네마틱 모션",
+    "showcase.phase1Desc": "로봇 팔이 당신을 중심으로 부드럽게 공전하며 영화 같은 궤도 촬영을 만들어냅니다",
+    "showcase.phase2Title": "압도적인 비주얼",
+    "showcase.phase2Desc": "고속 카메라와 정밀한 로봇 움직임이 만나 숨이 멎는 슬로우 모션을 탄생시킵니다",
+    "showcase.phase3Title": "글래머 & 판타지",
+    "showcase.phase3Desc": "일상을 벗어난 환상적인 순간 — 모든 시선이 당신에게 집중됩니다",
+    "showcase.phase4Title": "시선을 사로잡다",
+    "showcase.phase4Desc": "SNS에서 멈출 수 없는 콘텐츠. 한 번 보면 잊을 수 없는 영상",
 
     // Service
     "service.subtitle": "우리가 하는 일",
@@ -164,14 +165,15 @@ const translations: Record<Locale, Translations> = {
     "hero.imgAlt": "Glamorous event scene",
     "hero.microcopy": "Free consultation · Custom quote · 24h response",
 
-    // Robot Arm scroll showcase
-    "arm.precision": "PRECISION",
-    "arm.precisionDesc": "6-axis robotic movement for impossible camera angles",
-    "arm.cinematic": "CINEMATIC",
-    "arm.cinematicDesc": "Hollywood-grade slow-motion and orbital tracking shots",
-    "arm.starMoment": "YOUR",
-    "arm.starMomentHighlight": "STAR",
-    "arm.starMomentEnd": "MOMENT",
+    // Scroll showcase
+    "showcase.phase1Title": "CINEMATIC\nMOTION",
+    "showcase.phase1Desc": "The arm orbits around you in smooth arcs, creating film-grade orbital shots",
+    "showcase.phase2Title": "STUNNING\nVISUALS",
+    "showcase.phase2Desc": "High-speed cameras meet robotic precision — breathtaking slow-motion that stops the scroll",
+    "showcase.phase3Title": "GLAMOUR\n& FANTASY",
+    "showcase.phase3Desc": "An otherworldly moment where all eyes are on you — pure visual drama",
+    "showcase.phase4Title": "MADE TO\nTURN HEADS",
+    "showcase.phase4Desc": "Content so striking it demands attention. Once seen, never forgotten",
 
     // Service
     "service.subtitle": "What We Do",
