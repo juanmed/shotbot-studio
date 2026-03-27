@@ -191,18 +191,20 @@ const translations: Record<Locale, Translations> = {
     "showcase.phase4Title": "MADE TO\nTURN HEADS",
     "showcase.phase4Desc": "Content so striking it demands attention. Once seen, never forgotten",
 
-    // Service
-    "service.subtitle": "What We Do",
-    "service.title": "Why It's Special",
-    "service.description": "Rent our robotic camera arm for your event. We set up, we shoot, you shine.",
-    "service.roboticTitle": "Robotic Precision",
-    "service.roboticDesc": "Our 6-axis arm moves with cinematic precision, creating smooth orbital shots impossible by hand.",
-    "service.slowmoTitle": "Slow-Motion Magic",
-    "service.slowmoDesc": "High-speed cameras capture every detail — your jump, your spin, your expression — in breathtaking slow motion.",
-    "service.deliveryTitle": "Instant Delivery",
-    "service.deliveryDesc": "Clips are edited on-site and delivered to your phone within minutes. Share-ready perfection.",
-    "service.eventTitle": "Event Ready",
-    "service.eventDesc": "Weddings, brand launches, corporate events, private parties — we bring the wow factor anywhere.",
+    // Service — emotional outcomes
+    "service.subtitle": "Why It's Special",
+    "service.title": "You'll Know It\nWhen You See It",
+    "service.description": "Strike a pose. The robot does the rest. Cinematic footage, straight to your phone.",
+    "service.v1Title": "Cinematic Motion",
+    "service.v1Desc": "The camera orbits around you in sweeping arcs. The kind of shot you've only seen in films — now it's yours.",
+    "service.v2Title": "Scroll-Stopping Content",
+    "service.v2Desc": "Slow-motion so striking it freezes the feed. No filters needed. Just share-ready perfection.",
+    "service.v3Title": "The Main Attraction",
+    "service.v3Desc": "Guests line up. Crowds gather. Your event becomes the one everyone talks about.",
+    "service.v4Title": "Unforgettable Moments",
+    "service.v4Desc": "Not just photos — an experience. Something your guests will remember and share long after the night ends.",
+    "service.v5Title": "Premium Visual Identity",
+    "service.v5Desc": "Luxury-grade visuals that elevate your brand, your event, and your reputation.",
 
     // Portfolio
     "portfolio.subtitle": "Our Work",
