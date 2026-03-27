@@ -307,8 +307,12 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useI18n = () => {
+const fallbackT = (key: string) => key;
+const fallbackValue: I18nContextType = { locale: "ko", setLocale: () => {}, t: fallbackT };
+
+export const useI18n = (): I18nContextType => {
   const context = useContext(I18nContext);
-  if (!context) throw new Error("useI18n must be used within I18nProvider");
+  return context ?? fallbackValue;
+};
   return context;
 };
