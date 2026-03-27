@@ -172,11 +172,11 @@ const translations: Record<Locale, Translations> = {
   },
   en: {
     // Brand
-    "brand.tagline": "The future of event photography",
-    "brand.description": "A cinematic robotic arm that orbits around you — turning every event into an unforgettable visual experience.",
+    "brand.tagline": "Cinematic event experiences",
+    "brand.description": "A robotic camera arm that orbits around you — creating unforgettable cinematic content.",
 
     // CTA
-    "cta.primary": "Book Now",
+    "cta.primary": "Inquire Now",
     "cta.secondary": "View Portfolio",
 
     // Nav
@@ -188,8 +188,8 @@ const translations: Record<Locale, Translations> = {
     // Hero
     "hero.line1": "THE MOMENT",
     "hero.line2": "IS YOURS.",
-    "hero.description": "A robotic camera arm orbits around you — creating cinematic slow-motion content that stops the scroll.",
-    "hero.cta": "Book Now",
+    "hero.description": "A robotic camera orbits around you. Cinematic slow-motion, instantly shareable content.",
+    "hero.cta": "Inquire Now",
     "hero.scroll": "Scroll",
     "hero.imgAlt": "Glamorous event scene",
     "hero.microcopy": "Free consultation · Custom quote · 24h response",
@@ -204,23 +204,27 @@ const translations: Record<Locale, Translations> = {
     "showcase.phase4Title": "MADE TO\nTURN HEADS",
     "showcase.phase4Desc": "Content so striking it demands attention. Once seen, never forgotten",
 
+    // Mid-page CTAs
+    "midCta.afterPortfolio": "Your event could\nlook like this",
+    "midCta.afterTestimonials": "You're next",
+
     // Service — emotional outcomes
-    "service.subtitle": "Why It's Special",
+    "service.subtitle": "Why It's Different",
     "service.title": "You'll Know It\nWhen You See It",
-    "service.description": "Strike a pose. The robot does the rest. Cinematic footage, straight to your phone.",
+    "service.description": "Strike a pose. The robot does the rest.",
     "service.v1Title": "Cinematic Motion",
-    "service.v1Desc": "The camera orbits around you in sweeping arcs. The kind of shot you've only seen in films — now it's yours.",
-    "service.v2Title": "Scroll-Stopping Content",
-    "service.v2Desc": "Slow-motion so striking it freezes the feed. No filters needed. Just share-ready perfection.",
+    "service.v1Desc": "The camera orbits you in sweeping arcs. The shot you've only seen in films — now it's yours.",
+    "service.v2Title": "Instantly Shareable",
+    "service.v2Desc": "Edited on-site, ready to post. No filters needed — just share-ready perfection.",
     "service.v3Title": "The Main Attraction",
     "service.v3Desc": "Guests line up. Crowds gather. Your event becomes the one everyone talks about.",
     "service.v4Title": "Unforgettable Moments",
-    "service.v4Desc": "Not just photos — an experience. Something your guests will remember and share long after the night ends.",
+    "service.v4Desc": "Not just photos — an experience your guests remember long after the night ends.",
     "service.v5Title": "Premium Visual Identity",
-    "service.v5Desc": "Luxury-grade visuals that elevate your brand, your event, and your reputation.",
+    "service.v5Desc": "Luxury-grade visuals that elevate your brand, your event, your reputation.",
 
     // Portfolio
-    "portfolio.subtitle": "Our Work",
+    "portfolio.subtitle": "Real Results",
     "portfolio.title": "PORTFOLIO",
     "portfolio.filter.all": "All",
     "portfolio.filter.wedding": "Weddings",
@@ -261,19 +265,19 @@ const translations: Record<Locale, Translations> = {
     "perfectFor.corporate": "Corporate Events",
 
     // How It Works
-    "howItWorks.subtitle": "Process",
+    "howItWorks.subtitle": "Three Simple Steps",
     "howItWorks.title": "How It Works",
     "howItWorks.stepLabel": "STEP",
     "howItWorks.step1Title": "Tell Us About Your Event",
-    "howItWorks.step1Desc": "Share the date, venue, and vibe. We'll tailor the experience to match.",
+    "howItWorks.step1Desc": "Share the date, venue, and vibe. That's all we need.",
     "howItWorks.step2Title": "We Handle Everything",
-    "howItWorks.step2Desc": "Our team arrives, sets up the robot, and runs the entire shoot — you just enjoy the event.",
-    "howItWorks.step3Title": "Unforgettable Results",
-    "howItWorks.step3Desc": "Edited clips are delivered on the spot. Your guests walk away with something they'll never forget.",
+    "howItWorks.step2Desc": "Our team arrives, sets up, and runs the entire shoot.",
+    "howItWorks.step3Title": "Get Your Content",
+    "howItWorks.step3Desc": "Edited clips delivered on the spot. Your guests leave with something unforgettable.",
 
     // Testimonials
-    "testimonials.subtitle": "What They Say",
-    "testimonials.title": "Testimonials",
+    "testimonials.subtitle": "Real Stories",
+    "testimonials.title": "Hear It From Them",
     "testimonials.1.quote": "Our guests couldn't stop talking about it. The video quality was beyond anything we imagined.",
     "testimonials.1.name": "Jihyun Park",
     "testimonials.1.role": "Bride",
@@ -286,22 +290,23 @@ const translations: Record<Locale, Translations> = {
 
     // FAQ
     "faq.subtitle": "Questions",
-    "faq.title": "FAQ",
+    "faq.title": "Got Questions?",
     "faq.q1": "How much does it cost?",
-    "faq.a1": "We provide custom quotes based on event size, duration, and location. Reach out through the contact form.",
+    "faq.a1": "Custom quotes based on event size and duration. Reach out — no pressure.",
     "faq.q2": "What types of events can you cover?",
-    "faq.a2": "Weddings, corporate events, brand launches, clubs, festivals, private parties — any occasion.",
+    "faq.a2": "Weddings, corporate, brand launches, clubs, festivals, private parties — any occasion.",
     "faq.q3": "When do I receive the videos?",
-    "faq.a3": "Highlight clips are delivered on-site within minutes. Full videos within 48 hours after the event.",
+    "faq.a3": "Highlight clips on-site within minutes. Full videos within 48 hours.",
     "faq.q4": "How long does setup take?",
-    "faq.a4": "Our team completes setup in about one hour before the event starts.",
+    "faq.a4": "About one hour before the event starts.",
     "faq.q5": "Do you work outdoors?",
-    "faq.a5": "Yes, indoor and outdoor. We prepare optimal setups for any weather and venue conditions.",
+    "faq.a5": "Yes, indoor and outdoor. We optimize the setup for any venue and conditions.",
+    "faq.stillQuestions": "Still have questions? We'd love to hear from you",
 
     // Contact
-    "contact.subtitle": "Let's Work Together",
+    "contact.subtitle": "Let's Make It Happen",
     "contact.titlePrefix": "GET",
-    "contact.description": "Turn your event into something unforgettable. Inquire now.",
+    "contact.description": "Turn your event into something unforgettable.",
     "contact.name": "Your Name",
     "contact.emailOrPhone": "Email or Phone",
     "contact.eventType": "Event Type",
@@ -323,7 +328,7 @@ const translations: Record<Locale, Translations> = {
     "contact.quickKakao": "KakaoTalk",
     "contact.quickWhatsapp": "WhatsApp",
     "contact.quickEmail": "Email",
-    "contact.floatingCta": "Book Now",
+    "contact.floatingCta": "Inquire Now",
 
     // Footer
     "footer.rights": "All rights reserved.",
