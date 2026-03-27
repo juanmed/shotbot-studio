@@ -74,9 +74,9 @@ const HeroSection = () => {
       </motion.div>
 
       {/* Layer 2 — Gradient overlays for readability */}
-      <div className="absolute inset-0 bg-background/70" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/70" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/30 via-transparent to-background/30" />
+      <div className="absolute inset-0 bg-background/55" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-background/50" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-background/20" />
 
       {/* Layer 3 — Subtle ambient glow */}
       <motion.div
