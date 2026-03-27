@@ -1,10 +1,11 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { BRAND_NAME } from "@/lib/constants";
+import { HERO_VIDEO_IDS } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 import heroBg from "@/assets/hero-bg.jpg";
 
-const VIDEO_IDS = ["TpKQTbpT5ko", "_Tln3TFsFH0", "fg5H18wtEnM"];
+const VIDEO_IDS = HERO_VIDEO_IDS;
 
 const buildEmbedUrl = (id: string) =>
   `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1`;

@@ -2,24 +2,11 @@ import { useRef, useMemo } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import robotArm from "@/assets/robot-arm.png";
 import { BRAND_NAME } from "@/lib/constants";
+import { SHOWCASE_PHASES } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 
-interface Phase {
-  titleKey: string;
-  descKey: string;
-  position: "left" | "right" | "center";
-  highlight?: boolean;
-}
-
-const PHASES: Phase[] = [
-  { titleKey: "showcase.phase1Title", descKey: "showcase.phase1Desc", position: "left" },
-  { titleKey: "showcase.phase2Title", descKey: "showcase.phase2Desc", position: "right", highlight: true },
-  { titleKey: "showcase.phase3Title", descKey: "showcase.phase3Desc", position: "left" },
-  { titleKey: "showcase.phase4Title", descKey: "showcase.phase4Desc", position: "center", highlight: true },
-];
-
 const SCROLL_HEIGHT = "500vh";
-const PHASE_COUNT = PHASES.length;
+const PHASE_COUNT = SHOWCASE_PHASES.length;
 
 const RobotArmSection = () => {
   const { t } = useI18n();
@@ -31,27 +18,22 @@ const RobotArmSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // ── Arm transforms: smooth cinematic arc ──
   const armRotate = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [0, -12, 8, -6, 0]);
   const armScale = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.85, 1], [0.75, 1, 1.12, 1.05, 0.95]);
   const armX = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [80, -20, 30, -10, 0]);
   const armY = useTransform(scrollYProgress, [0, 0.3, 0.6, 1], [60, -10, -30, 0]);
 
-  // ── Ambient glow ──
   const glowOpacity = useTransform(scrollYProgress, [0, 0.3, 0.5, 0.7, 1], [0, 0.15, 0.3, 0.15, 0]);
   const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.6, 1.2, 0.8]);
   const glowX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], ["50%", "35%", "65%", "50%"]);
 
-  // ── Camera flash at midpoint ──
   const flashOpacity = useTransform(scrollYProgress, [0.48, 0.5, 0.52], [0, 0.5, 0]);
 
-  // ── Ring / orbit line ──
   const ringOpacity = useTransform(scrollYProgress, [0.1, 0.2, 0.8, 0.9], [0, 0.12, 0.12, 0]);
   const ringRotate = useTransform(scrollYProgress, [0, 1], [0, 180]);
 
-  // ── Phase text visibility: each phase gets ~25% of scroll ──
   const phaseAnimations = useMemo(() => {
-    return PHASES.map((_, i) => {
+    return SHOWCASE_PHASES.map((_, i) => {
       const start = i / PHASE_COUNT;
       const fadeIn = start + 0.02;
       const peak = start + 0.12;
@@ -60,10 +42,8 @@ const RobotArmSection = () => {
     });
   }, []);
 
-  // ── Progress bar ──
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
-  // Reduced motion: show a static version
   if (prefersReducedMotion) {
     return (
       <section className="section-py px-6 bg-background">
@@ -76,7 +56,7 @@ const RobotArmSection = () => {
             height={1024}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {PHASES.map((phase, i) => (
+            {SHOWCASE_PHASES.map((phase, i) => (
               <div key={i} className="text-left">
                 <h3 className="font-display text-xl font-800 text-foreground mb-2">
                   {t(phase.titleKey)}
@@ -95,10 +75,8 @@ const RobotArmSection = () => {
   return (
     <div ref={containerRef} style={{ height: SCROLL_HEIGHT }} className="relative">
       <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
-        {/* Background */}
         <div className="absolute inset-0 bg-background" />
 
-        {/* Ambient glow that drifts */}
         <motion.div
           style={{ opacity: glowOpacity, scale: glowScale, left: glowX }}
           className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] md:w-[700px] md:h-[700px] rounded-full pointer-events-none"
@@ -106,20 +84,13 @@ const RobotArmSection = () => {
           <div className="w-full h-full rounded-full bg-accent/15 blur-[150px]" />
         </motion.div>
 
-        {/* Orbit ring */}
         <motion.div
           style={{ opacity: ringOpacity, rotate: ringRotate }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] md:w-[520px] md:h-[520px] rounded-full border border-foreground/[0.06] pointer-events-none"
         />
 
-        {/* Robot arm */}
         <motion.div
-          style={{
-            rotate: armRotate,
-            scale: armScale,
-            x: armX,
-            y: armY,
-          }}
+          style={{ rotate: armRotate, scale: armScale, x: armX, y: armY }}
           className="relative z-10 w-[260px] md:w-[420px] lg:w-[500px]"
         >
           <img
@@ -128,20 +99,16 @@ const RobotArmSection = () => {
             className="w-full h-auto"
             width={1024}
             height={1024}
-            style={{
-              filter: "drop-shadow(0 20px 60px hsl(0 0% 0% / 0.5))",
-            }}
+            style={{ filter: "drop-shadow(0 20px 60px hsl(0 0% 0% / 0.5))" }}
           />
         </motion.div>
 
-        {/* Camera flash */}
         <motion.div
           style={{ opacity: flashOpacity }}
           className="absolute inset-0 bg-foreground/80 z-20 pointer-events-none"
         />
 
-        {/* Phase text blocks */}
-        {PHASES.map((phase, i) => {
+        {SHOWCASE_PHASES.map((phase, i) => {
           const anim = phaseAnimations[i];
           const opacityVal = useTransform(
             scrollYProgress,
@@ -180,7 +147,6 @@ const RobotArmSection = () => {
           );
         })}
 
-        {/* Progress indicator */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-24 md:w-32 z-10">
           <div className="h-px bg-border w-full">
             <motion.div

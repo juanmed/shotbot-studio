@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
+import { TESTIMONIALS } from "@/lib/siteData";
 import { Quote } from "lucide-react";
 
 const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
@@ -16,12 +17,6 @@ const cardVariants = {
 const TestimonialsSection = () => {
   const { t } = useI18n();
 
-  const testimonials = [
-    { quoteKey: "testimonials.1.quote", nameKey: "testimonials.1.name", roleKey: "testimonials.1.role" },
-    { quoteKey: "testimonials.2.quote", nameKey: "testimonials.2.name", roleKey: "testimonials.2.role" },
-    { quoteKey: "testimonials.3.quote", nameKey: "testimonials.3.name", roleKey: "testimonials.3.role" },
-  ];
-
   return (
     <section className="section-py px-6 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background" />
@@ -30,7 +25,7 @@ const TestimonialsSection = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.8, ease: EASE }}
           className="text-center mb-20"
         >
           <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">
@@ -42,7 +37,7 @@ const TestimonialsSection = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((item, i) => (
+          {TESTIMONIALS.map((item, i) => (
             <motion.div
               key={i}
               custom={i}

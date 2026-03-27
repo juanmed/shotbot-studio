@@ -2,19 +2,13 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { BRAND_NAME } from "@/lib/constants";
+import { NAV_LINKS } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { locale, setLocale, t } = useI18n();
-
-  const navLinks = [
-    { label: t("nav.service"), href: "#service" },
-    { label: t("nav.portfolio"), href: "#portfolio" },
-    { label: t("nav.faq"), href: "#faq" },
-    { label: t("nav.contact"), href: "#contact" },
-  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -39,7 +33,7 @@ const Navbar = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link, i) => (
+          {NAV_LINKS.map((link, i) => (
             <motion.a
               key={link.href}
               href={link.href}
@@ -48,7 +42,7 @@ const Navbar = () => {
               transition={{ duration: 0.5, delay: 0.4 + i * 0.08 }}
               className="link-underline font-body text-[11px] tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
             >
-              {link.label}
+              {t(link.labelKey)}
             </motion.a>
           ))}
           <motion.button
@@ -89,7 +83,7 @@ const Navbar = () => {
             className="md:hidden bg-background/98 backdrop-blur-xl border-b border-border/50 overflow-hidden"
           >
             <div className="px-6 py-8 flex flex-col gap-5">
-              {navLinks.map((link, i) => (
+              {NAV_LINKS.map((link, i) => (
                 <motion.a
                   key={link.href}
                   href={link.href}
@@ -99,7 +93,7 @@ const Navbar = () => {
                   transition={{ duration: 0.3, delay: i * 0.06 }}
                   className="font-display text-lg font-600 text-foreground hover:text-muted-foreground transition-colors"
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </motion.a>
               ))}
             </div>
