@@ -2,10 +2,12 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import { BRAND_NAME } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
 
 const ContactSection = () => {
   const { toast } = useToast();
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,8 +19,8 @@ const ContactSection = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Inquiry Sent!",
-      description: `Thanks ${formData.name}! We'll get back to you within 24 hours.`,
+      title: t("contact.toastTitle"),
+      description: t("contact.toastDesc", { name: formData.name }),
     });
     setFormData({ name: "", email: "", eventType: "", date: "", message: "" });
   };
@@ -43,13 +45,13 @@ const ContactSection = () => {
           className="text-center mb-16"
         >
           <p className="font-body text-sm tracking-[0.3em] uppercase text-primary mb-4">
-            Let's Work Together
+            {t("contact.subtitle")}
           </p>
           <h2 className="font-display text-4xl md:text-6xl font-800 tracking-tight">
-            GET <span className="text-gradient-gold">{BRAND_NAME}</span>
+            {t("contact.titlePrefix")} <span className="text-gradient-gold">{BRAND_NAME}</span>
           </h2>
           <p className="font-body text-muted-foreground mt-6 text-lg">
-            Ready to make your event unforgettable? Drop us a line.
+            {t("contact.description")}
           </p>
         </motion.div>
 
@@ -65,7 +67,7 @@ const ContactSection = () => {
             <input
               type="text"
               name="name"
-              placeholder="Your Name"
+              placeholder={t("contact.name")}
               required
               maxLength={100}
               value={formData.name}
@@ -75,7 +77,7 @@ const ContactSection = () => {
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder={t("contact.email")}
               required
               maxLength={255}
               value={formData.email}
@@ -91,13 +93,13 @@ const ContactSection = () => {
               onChange={handleChange}
               className={inputClasses}
             >
-              <option value="" disabled>Event Type</option>
-              <option value="wedding">Wedding</option>
-              <option value="corporate">Corporate Event</option>
-              <option value="party">Private Party</option>
-              <option value="brand">Brand Launch</option>
-              <option value="nightlife">Nightlife / Club</option>
-              <option value="other">Other</option>
+              <option value="" disabled>{t("contact.eventType")}</option>
+              <option value="wedding">{t("contact.eventWedding")}</option>
+              <option value="corporate">{t("contact.eventCorporate")}</option>
+              <option value="party">{t("contact.eventParty")}</option>
+              <option value="brand">{t("contact.eventBrand")}</option>
+              <option value="nightlife">{t("contact.eventNightlife")}</option>
+              <option value="other">{t("contact.eventOther")}</option>
             </select>
             <input
               type="date"
@@ -110,7 +112,7 @@ const ContactSection = () => {
           </div>
           <textarea
             name="message"
-            placeholder="Tell us about your event..."
+            placeholder={t("contact.message")}
             rows={5}
             maxLength={1000}
             value={formData.message}
@@ -123,7 +125,7 @@ const ContactSection = () => {
             className="w-full flex items-center justify-center gap-3 bg-primary text-primary-foreground py-4 font-display font-700 text-sm tracking-widest uppercase hover:opacity-90 transition-opacity duration-300"
           >
             <Send className="w-4 h-4" />
-            Send Inquiry
+            {t("contact.send")}
           </button>
         </motion.form>
       </div>

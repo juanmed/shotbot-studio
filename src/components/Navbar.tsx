@@ -2,22 +2,26 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { BRAND_NAME } from "@/lib/constants";
-
-const navLinks = [
-  { label: "Service", href: "#service" },
-  { label: "Portfolio", href: "#portfolio" },
-  { label: "Get " + BRAND_NAME, href: "#contact" },
-];
+import { useI18n } from "@/lib/i18n";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { locale, setLocale, t } = useI18n();
+
+  const navLinks = [
+    { label: t("nav.service"), href: "#service" },
+    { label: t("nav.portfolio"), href: "#portfolio" },
+    { label: t("nav.contact"), href: "#contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const toggleLocale = () => setLocale(locale === "ko" ? "en" : "ko");
 
   return (
     <motion.nav
@@ -44,15 +48,29 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+          <button
+            onClick={toggleLocale}
+            className="font-body text-xs tracking-widest uppercase border border-border px-3 py-1.5 text-muted-foreground hover:text-primary hover:border-primary transition-colors duration-300"
+          >
+            {locale === "ko" ? "EN" : "KO"}
+          </button>
         </div>
 
         {/* Mobile toggle */}
-        <button
-          className="md:hidden text-foreground"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex md:hidden items-center gap-3">
+          <button
+            onClick={toggleLocale}
+            className="font-body text-xs tracking-widest uppercase border border-border px-2 py-1 text-muted-foreground hover:text-primary transition-colors"
+          >
+            {locale === "ko" ? "EN" : "KO"}
+          </button>
+          <button
+            className="text-foreground"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
