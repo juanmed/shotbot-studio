@@ -165,14 +165,15 @@ const translations: Record<Locale, Translations> = {
     "hero.imgAlt": "Glamorous event scene",
     "hero.microcopy": "Free consultation · Custom quote · 24h response",
 
-    // Robot Arm scroll showcase
-    "arm.precision": "PRECISION",
-    "arm.precisionDesc": "6-axis robotic movement for impossible camera angles",
-    "arm.cinematic": "CINEMATIC",
-    "arm.cinematicDesc": "Hollywood-grade slow-motion and orbital tracking shots",
-    "arm.starMoment": "YOUR",
-    "arm.starMomentHighlight": "STAR",
-    "arm.starMomentEnd": "MOMENT",
+    // Scroll showcase
+    "showcase.phase1Title": "CINEMATIC\nMOTION",
+    "showcase.phase1Desc": "The arm orbits around you in smooth arcs, creating film-grade orbital shots",
+    "showcase.phase2Title": "STUNNING\nVISUALS",
+    "showcase.phase2Desc": "High-speed cameras meet robotic precision — breathtaking slow-motion that stops the scroll",
+    "showcase.phase3Title": "GLAMOUR\n& FANTASY",
+    "showcase.phase3Desc": "An otherworldly moment where all eyes are on you — pure visual drama",
+    "showcase.phase4Title": "MADE TO\nTURN HEADS",
+    "showcase.phase4Desc": "Content so striking it demands attention. Once seen, never forgotten",
 
     // Service
     "service.subtitle": "What We Do",
