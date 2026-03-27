@@ -39,18 +39,20 @@ const translations: Record<Locale, Translations> = {
     "showcase.phase4Title": "시선을 사로잡다",
     "showcase.phase4Desc": "SNS에서 멈출 수 없는 콘텐츠. 한 번 보면 잊을 수 없는 영상",
 
-    // Service
-    "service.subtitle": "우리가 하는 일",
-    "service.title": "왜 특별한가",
-    "service.description": "로봇 카메라 팔을 이벤트에 대여하세요. 설치부터 촬영까지 — 당신은 빛나기만 하면 됩니다.",
-    "service.roboticTitle": "로봇 정밀 촬영",
-    "service.roboticDesc": "6축 로봇 팔이 시네마틱 정밀함으로 움직이며 부드러운 궤도 촬영을 만들어냅니다.",
-    "service.slowmoTitle": "슬로우 모션 매직",
-    "service.slowmoDesc": "고속 카메라가 점프, 회전, 표정 — 모든 디테일을 숨 막히는 슬로우 모션으로 포착합니다.",
-    "service.deliveryTitle": "즉시 전달",
-    "service.deliveryDesc": "현장에서 편집된 클립이 몇 분 안에 휴대폰으로 전달됩니다. 공유 준비 완료.",
-    "service.eventTitle": "어디서든 가능",
-    "service.eventDesc": "웨딩, 브랜드 론칭, 기업 행사, 프라이빗 파티 — 어떤 행사에도 놀라움을 선사합니다.",
+    // Service — emotional outcomes
+    "service.subtitle": "왜 특별한가",
+    "service.title": "보는 순간 알게 됩니다",
+    "service.description": "포즈를 취하세요. 나머지는 로봇이 합니다. 영화 같은 영상이 바로 당신의 손안에.",
+    "service.v1Title": "시네마틱 모션",
+    "service.v1Desc": "카메라가 당신을 중심으로 공전합니다. 영화에서만 보던 궤도 촬영이 현실이 됩니다.",
+    "service.v2Title": "SNS를 멈추는 콘텐츠",
+    "service.v2Desc": "스크롤을 멈추게 하는 슬로우 모션. 필터 없이도 완벽한, 공유하고 싶은 영상.",
+    "service.v3Title": "이벤트의 중심",
+    "service.v3Desc": "게스트들이 줄 서서 촬영합니다. 당신의 이벤트를 화제의 중심으로 만드세요.",
+    "service.v4Title": "잊을 수 없는 경험",
+    "service.v4Desc": "사진이 아닌 경험. 게스트들이 오래도록 기억하고 이야기할 특별한 순간을 선사합니다.",
+    "service.v5Title": "프리미엄 브랜드 이미지",
+    "service.v5Desc": "럭셔리한 비주얼이 당신의 브랜드와 이벤트에 프리미엄 아이덴티티를 더합니다.",
 
     // Portfolio
     "portfolio.subtitle": "우리의 작업",
