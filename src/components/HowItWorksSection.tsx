@@ -18,7 +18,7 @@ const HowItWorksSection = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center mb-16"
         >
           <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">
@@ -36,10 +36,10 @@ const HowItWorksSection = () => {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.6, delay: i * 0.12 }}
-              className="bg-background p-8 md:p-10"
+              transition={{ duration: 0.7, delay: i * 0.12, ease: [0.25, 0.1, 0.25, 1] }}
+              className="bg-background p-8 md:p-10 group hover:bg-secondary/10 transition-colors duration-500"
             >
-              <span className="font-display text-xs tracking-[0.3em] text-muted-foreground/40 uppercase">
+              <span className="font-display text-xs tracking-[0.3em] text-muted-foreground/30 uppercase group-hover:text-muted-foreground/60 transition-colors duration-500">
                 {t("howItWorks.stepLabel")} {step.num}
               </span>
               <h3 className="font-display text-lg font-800 mt-4 mb-3 text-foreground tracking-tight">

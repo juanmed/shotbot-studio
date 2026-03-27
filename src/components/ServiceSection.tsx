@@ -17,12 +17,11 @@ const ServiceSection = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/5 to-background" />
 
       <div className="max-w-5xl mx-auto relative z-10">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center mb-20"
         >
           <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">
@@ -36,21 +35,20 @@ const ServiceSection = () => {
           </p>
         </motion.div>
 
-        {/* Value propositions — alternating layout */}
         <div className="space-y-0">
           {values.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.6, delay: i * 0.06 }}
-              className="border-t border-border py-8 md:py-10 grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-2 md:gap-12 items-baseline"
+              transition={{ duration: 0.6, delay: i * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
+              className="border-t border-border py-8 md:py-10 grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-2 md:gap-12 items-baseline group"
             >
-              <h3 className="font-display text-lg md:text-xl font-800 tracking-tight text-foreground">
+              <h3 className="font-display text-lg md:text-xl font-800 tracking-tight text-foreground group-hover:text-gradient-chrome transition-all duration-500">
                 {t(item.titleKey)}
               </h3>
-              <p className="font-body text-sm text-muted-foreground leading-relaxed">
+              <p className="font-body text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/60 transition-colors duration-500">
                 {t(item.descKey)}
               </p>
             </motion.div>
