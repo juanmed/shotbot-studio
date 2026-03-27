@@ -156,12 +156,13 @@ const translations: Record<Locale, Translations> = {
     "nav.contact": "Contact",
 
     // Hero
-    "hero.line1": "YOUR MOMENT.",
-    "hero.line2": "PERFECTED.",
-    "hero.description": "A cinematic robotic arm that orbits around you — capturing stunning slow-motion videos that turn heads.",
+    "hero.line1": "THE MOMENT",
+    "hero.line2": "IS YOURS.",
+    "hero.description": "A robotic camera arm orbits around you — creating cinematic slow-motion content that stops the scroll.",
     "hero.cta": "Book Now",
     "hero.scroll": "Scroll",
     "hero.imgAlt": "Glamorous event scene",
+    "hero.microcopy": "Free consultation · Custom quote · 24h response",
 
     // Robot Arm scroll showcase
     "arm.precision": "PRECISION",
