@@ -2,12 +2,14 @@ import { motion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { Quote } from "lucide-react";
 
+const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.12, ease: [0.25, 0.1, 0.25, 1] },
+    transition: { duration: 0.7, delay: i * 0.12, ease: EASE },
   }),
 };
 
