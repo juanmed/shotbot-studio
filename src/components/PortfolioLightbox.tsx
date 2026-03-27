@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import type { PortfolioItem } from "@/lib/portfolioData";
+import type { PortfolioItem } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 
 interface PortfolioLightboxProps {
