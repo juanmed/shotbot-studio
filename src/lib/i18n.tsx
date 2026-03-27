@@ -7,24 +7,24 @@ type Translations = { [key: string]: string };
 const translations: Record<Locale, Translations> = {
   ko: {
     // Brand
-    "brand.tagline": "이벤트 촬영의 미래",
-    "brand.description": "시네마틱 로봇 팔이 당신을 중심으로 회전하며 촬영 — 모든 이벤트를 잊을 수 없는 순간으로 만듭니다.",
+    "brand.tagline": "시네마틱 이벤트 경험",
+    "brand.description": "로봇 카메라 팔이 당신을 중심으로 공전하며 — 잊을 수 없는 시네마틱 콘텐츠를 만듭니다.",
 
     // CTA
-    "cta.primary": "예약 문의",
+    "cta.primary": "지금 문의하기",
     "cta.secondary": "포트폴리오 보기",
 
     // Nav
     "nav.service": "서비스",
     "nav.portfolio": "포트폴리오",
     "nav.faq": "FAQ",
-    "nav.contact": "문의하기",
+    "nav.contact": "문의",
 
     // Hero
     "hero.line1": "당신이 주인공인",
     "hero.line2": "그 순간.",
-    "hero.description": "로봇 카메라 팔이 당신을 중심으로 공전하며 — 잊을 수 없는 시네마틱 영상을 만들어냅니다.",
-    "hero.cta": "예약 문의",
+    "hero.description": "로봇 카메라가 당신을 중심으로 공전합니다. 영화 같은 슬로우 모션, 즉시 공유 가능한 콘텐츠.",
+    "hero.cta": "지금 문의하기",
     "hero.scroll": "스크롤",
     "hero.imgAlt": "화려한 이벤트 현장",
     "hero.microcopy": "무료 상담 · 맞춤 견적 · 24시간 내 응답",
@@ -39,23 +39,27 @@ const translations: Record<Locale, Translations> = {
     "showcase.phase4Title": "시선을 사로잡다",
     "showcase.phase4Desc": "SNS에서 멈출 수 없는 콘텐츠. 한 번 보면 잊을 수 없는 영상",
 
+    // Mid-page CTAs
+    "midCta.afterPortfolio": "당신의 이벤트도\n이렇게 만들어 드립니다",
+    "midCta.afterTestimonials": "다음 주인공은\n당신입니다",
+
     // Service — emotional outcomes
     "service.subtitle": "왜 특별한가",
-    "service.title": "보는 순간 알게 됩니다",
-    "service.description": "포즈를 취하세요. 나머지는 로봇이 합니다. 영화 같은 영상이 바로 당신의 손안에.",
+    "service.title": "한눈에 알 수 있는\n차이",
+    "service.description": "포즈를 취하세요. 나머지는 로봇이 합니다.",
     "service.v1Title": "시네마틱 모션",
     "service.v1Desc": "카메라가 당신을 중심으로 공전합니다. 영화에서만 보던 궤도 촬영이 현실이 됩니다.",
-    "service.v2Title": "SNS를 멈추는 콘텐츠",
-    "service.v2Desc": "스크롤을 멈추게 하는 슬로우 모션. 필터 없이도 완벽한, 공유하고 싶은 영상.",
+    "service.v2Title": "즉시 공유 가능",
+    "service.v2Desc": "촬영 즉시 편집 완료. 필터 없이도 완벽한, 바로 공유 가능한 콘텐츠.",
     "service.v3Title": "이벤트의 중심",
-    "service.v3Desc": "게스트들이 줄 서서 촬영합니다. 당신의 이벤트를 화제의 중심으로 만드세요.",
+    "service.v3Desc": "게스트들이 줄 서서 촬영합니다. 당신의 이벤트를 화제의 중심으로.",
     "service.v4Title": "잊을 수 없는 경험",
-    "service.v4Desc": "사진이 아닌 경험. 게스트들이 오래도록 기억하고 이야기할 특별한 순간을 선사합니다.",
-    "service.v5Title": "프리미엄 브랜드 이미지",
-    "service.v5Desc": "럭셔리한 비주얼이 당신의 브랜드와 이벤트에 프리미엄 아이덴티티를 더합니다.",
+    "service.v4Desc": "사진이 아닌 경험. 오래도록 기억에 남는 특별한 순간.",
+    "service.v5Title": "프리미엄 비주얼",
+    "service.v5Desc": "럭셔리한 영상이 브랜드와 이벤트에 프리미엄 아이덴티티를 더합니다.",
 
     // Portfolio
-    "portfolio.subtitle": "우리의 작업",
+    "portfolio.subtitle": "실제 결과물",
     "portfolio.title": "포트폴리오",
     "portfolio.filter.all": "전체",
     "portfolio.filter.wedding": "웨딩",
@@ -96,47 +100,48 @@ const translations: Record<Locale, Translations> = {
     "perfectFor.corporate": "기업 행사",
 
     // How It Works
-    "howItWorks.subtitle": "프로세스",
-    "howItWorks.title": "이용 방법",
+    "howItWorks.subtitle": "3단계로 끝",
+    "howItWorks.title": "이렇게 진행됩니다",
     "howItWorks.stepLabel": "STEP",
     "howItWorks.step1Title": "이벤트를 알려주세요",
-    "howItWorks.step1Desc": "날짜, 장소, 분위기만 알려주세요. 맞춤 경험을 준비합니다.",
+    "howItWorks.step1Desc": "날짜, 장소, 분위기만 알려주시면 됩니다.",
     "howItWorks.step2Title": "우리가 세팅합니다",
-    "howItWorks.step2Desc": "전문 팀이 현장에 도착해 로봇을 설치하고 모든 촬영을 진행합니다.",
-    "howItWorks.step3Title": "잊을 수 없는 결과물",
-    "howItWorks.step3Desc": "편집된 영상이 현장에서 바로 전달됩니다. 게스트들은 특별한 순간을 간직합니다.",
+    "howItWorks.step2Desc": "전문 팀이 현장에 도착해 모든 촬영을 진행합니다.",
+    "howItWorks.step3Title": "콘텐츠를 받으세요",
+    "howItWorks.step3Desc": "편집된 영상이 현장에서 바로 전달됩니다.",
 
     // Testimonials
-    "testimonials.subtitle": "후기",
-    "testimonials.title": "고객 후기",
+    "testimonials.subtitle": "실제 후기",
+    "testimonials.title": "직접 경험한 분들의 이야기",
     "testimonials.1.quote": "게스트들이 열광했어요. 영상 퀄리티가 상상 이상이었습니다.",
     "testimonials.1.name": "박지현",
     "testimonials.1.role": "웨딩 신부",
-    "testimonials.2.quote": "브랜드 론칭 이벤트에서 가장 화제가 된 콘텐츠였습니다. 압도적이에요.",
+    "testimonials.2.quote": "브랜드 론칭에서 가장 화제가 된 콘텐츠. 압도적이에요.",
     "testimonials.2.name": "이승우",
     "testimonials.2.role": "마케팅 디렉터",
-    "testimonials.3.quote": "클럽 오프닝에 Shotbot을 불렀는데, SNS에서 폭발적인 반응이었어요.",
+    "testimonials.3.quote": "클럽 오프닝에 불렀는데 SNS에서 폭발적 반응이었어요.",
     "testimonials.3.name": "김소연",
     "testimonials.3.role": "이벤트 기획자",
 
     // FAQ
     "faq.subtitle": "자주 묻는 질문",
-    "faq.title": "FAQ",
-    "faq.q1": "촬영 비용은 얼마인가요?",
-    "faq.a1": "이벤트 규모, 시간, 장소에 따라 맞춤 견적을 드립니다. 문의 양식을 통해 연락주세요.",
-    "faq.q2": "어떤 이벤트에서 이용할 수 있나요?",
-    "faq.a2": "웨딩, 기업 행사, 브랜드 론칭, 클럽, 페스티벌, 프라이빗 파티 등 모든 이벤트에서 이용 가능합니다.",
-    "faq.q3": "영상은 언제 받을 수 있나요?",
-    "faq.a3": "현장에서 편집된 하이라이트 클립은 몇 분 안에 전달됩니다. 풀 영상은 이벤트 후 48시간 이내에 전달됩니다.",
+    "faq.title": "궁금한 점이 있으신가요?",
+    "faq.q1": "비용은 얼마인가요?",
+    "faq.a1": "이벤트 규모와 시간에 따라 맞춤 견적을 드립니다. 부담 없이 문의하세요.",
+    "faq.q2": "어떤 이벤트에서 이용 가능한가요?",
+    "faq.a2": "웨딩, 기업 행사, 브랜드 론칭, 클럽, 파티 등 모든 이벤트에서 가능합니다.",
+    "faq.q3": "영상은 언제 받나요?",
+    "faq.a3": "하이라이트 클립은 현장에서 바로 전달. 풀 영상은 48시간 이내.",
     "faq.q4": "설치에 얼마나 걸리나요?",
-    "faq.a4": "전문 팀이 이벤트 시작 전 약 1시간 내에 설치를 완료합니다.",
-    "faq.q5": "야외 이벤트에서도 가능한가요?",
-    "faq.a5": "네, 야외와 실내 모두 가능합니다. 날씨와 장소 조건에 따라 최적의 세팅을 준비합니다.",
+    "faq.a4": "이벤트 시작 전 약 1시간 내에 완료됩니다.",
+    "faq.q5": "야외에서도 되나요?",
+    "faq.a5": "네. 실내·야외 모두 가능하며 장소에 맞게 최적 세팅합니다.",
+    "faq.stillQuestions": "더 궁금한 점이 있으시면 편하게 문의하세요",
 
     // Contact
-    "contact.subtitle": "함께 일해요",
+    "contact.subtitle": "지금 시작하세요",
     "contact.titlePrefix": "GET",
-    "contact.description": "이벤트를 잊을 수 없는 순간으로. 지금 문의하세요.",
+    "contact.description": "당신의 이벤트를 잊을 수 없는 순간으로 만드세요.",
     "contact.name": "이름",
     "contact.emailOrPhone": "이메일 또는 전화번호",
     "contact.eventType": "이벤트 유형",
@@ -158,7 +163,7 @@ const translations: Record<Locale, Translations> = {
     "contact.quickKakao": "카카오톡",
     "contact.quickWhatsapp": "WhatsApp",
     "contact.quickEmail": "이메일",
-    "contact.floatingCta": "예약 문의",
+    "contact.floatingCta": "지금 문의",
 
     // Footer
     "footer.rights": "All rights reserved.",
