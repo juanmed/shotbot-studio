@@ -24,6 +24,7 @@ const Index = () => {
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
+      <FloatingCTA />
       <Footer />
     </main>
   );
