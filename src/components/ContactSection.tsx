@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { BRAND_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
@@ -30,13 +30,11 @@ const ContactSection = () => {
   };
 
   const inputClasses =
-    "w-full bg-secondary border border-border px-4 py-3 font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors duration-300";
+    "w-full bg-transparent border-b border-border px-0 py-4 font-body text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 transition-colors duration-300";
 
   return (
-    <section id="contact" className="py-32 px-6 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/10 to-background" />
-
-      <div className="max-w-3xl mx-auto relative z-10">
+    <section id="contact" className="section-py px-6 relative">
+      <div className="max-w-2xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -44,13 +42,13 @@ const ContactSection = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <p className="font-body text-sm tracking-[0.3em] uppercase text-primary mb-4">
+          <p className="font-body text-xs tracking-[0.3em] uppercase text-muted-foreground mb-4">
             {t("contact.subtitle")}
           </p>
           <h2 className="font-display text-4xl md:text-6xl font-800 tracking-tight">
-            {t("contact.titlePrefix")} <span className="text-gradient-gold">{BRAND_NAME}</span>
+            {t("contact.titlePrefix")} <span className="text-gradient-chrome">{BRAND_NAME}</span>
           </h2>
-          <p className="font-body text-muted-foreground mt-6 text-lg">
+          <p className="font-body text-muted-foreground mt-6 text-base">
             {t("contact.description")}
           </p>
         </motion.div>
@@ -61,9 +59,9 @@ const ContactSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="space-y-4"
+          className="space-y-2"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <input
               type="text"
               name="name"
@@ -85,7 +83,7 @@ const ContactSection = () => {
               className={inputClasses}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
             <select
               name="eventType"
               required
@@ -113,19 +111,19 @@ const ContactSection = () => {
           <textarea
             name="message"
             placeholder={t("contact.message")}
-            rows={5}
+            rows={4}
             maxLength={1000}
             value={formData.message}
             onChange={handleChange}
-            className={inputClasses + " resize-none"}
+            className={inputClasses + " resize-none border border-border px-4 mt-6"}
           />
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-3 bg-primary text-primary-foreground py-4 font-display font-700 text-sm tracking-widest uppercase hover:opacity-90 transition-opacity duration-300"
+            className="w-full flex items-center justify-center gap-3 bg-foreground text-background py-4 mt-8 font-display font-700 text-xs tracking-[0.2em] uppercase hover:bg-foreground/90 transition-colors duration-300"
           >
-            <Send className="w-4 h-4" />
             {t("contact.send")}
+            <ArrowRight className="w-4 h-4" />
           </button>
         </motion.form>
       </div>
