@@ -97,11 +97,13 @@ function interpolatePose(progress: number) {
   return {
     // j1 sweeps full 2π around Y — sole driver of the circular XZ orbit.
     j1: circular,
-    // Shoulder, elbow, forearm held at reach-maximising angles once extended.
-    // Keeping these mostly constant means the end-effector traces a clean circle.
-    j2: -0.92 * extendFrac,
-    j3:  0.30 * extendFrac,
-    j4:  0.62 * extendFrac,
+    // FK-derived reach-maximising angles (0.920m radius, 0.087m droop):
+    //   j2=-0.35: shoulder 20° above horizontal
+    //   j3= 0.50: visible elbow bend (29°)
+    //   j4=-0.15: wrist compensates to keep end-effector near level
+    j2: -0.35 * extendFrac,
+    j3:  0.50 * extendFrac,
+    j4: -0.15 * extendFrac,
     // Wrist roll: small sinusoidal variation so the wrist reads as alive.
     j5:  0.35 * Math.sin(theta),
     // Tool counter-rotation: cancels some of j1 so the tool keeps facing outward.
