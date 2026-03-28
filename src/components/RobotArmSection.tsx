@@ -13,8 +13,8 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import {
   motion,
+  useMotionValue,
   useReducedMotion,
-  useScroll,
   useTransform,
   type MotionValue,
 } from "framer-motion";
@@ -38,7 +38,6 @@ type GLTFResult = GLTF & {
 };
 
 interface RobotPoseKeyframe {
-  at: number;
   j1: number;
   j2: number;
   j3: number;
@@ -64,129 +63,18 @@ interface ShowcasePhaseWindow {
 
 const JOINT_AXES: Record<JointKey, JointAxis> = {
   j1: "y",
-  j2: "z",
-  j3: "z",
-  j4: "x",
-  j5: "x",
-  j6: "z",
+  j2: "y",
+  j3: "y",
+  j4: "y",
+  j5: "z",
+  j6: "x",
 };
 
-const ROBOT_POSE_KEYFRAMES: RobotPoseKeyframe[] = [
-  {
-    at: 0,
-    j1: -0.12,
-    j2: -0.25,
-    j3: 0.38,
-    j4: -0.16,
-    j5: 0.08,
-    j6: -0.08,
-    groupX: 0.2,
-    groupY: -1.9,
-    groupZ: 0,
-    cameraX: 1.8,
-    cameraY: 1.85,
-    cameraZ: 7.4,
-    lookAheadX: -0.15,
-    lookAheadY: 0.08,
-    lookAheadZ: 0,
-  },
-  {
-    at: 0.18,
-    j1: -0.26,
-    j2: -0.42,
-    j3: 0.74,
-    j4: -0.25,
-    j5: 0.16,
-    j6: -0.12,
-    groupX: 0.1,
-    groupY: -1.86,
-    groupZ: 0.08,
-    cameraX: 1.25,
-    cameraY: 1.95,
-    cameraZ: 6.95,
-    lookAheadX: -0.12,
-    lookAheadY: 0.12,
-    lookAheadZ: 0.02,
-  },
-  {
-    at: 0.42,
-    j1: -0.9,
-    j2: -0.7,
-    j3: 1.12,
-    j4: 0.18,
-    j5: 0.48,
-    j6: 0.1,
-    groupX: 0,
-    groupY: -1.82,
-    groupZ: 0.18,
-    cameraX: 0.45,
-    cameraY: 2.05,
-    cameraZ: 6.35,
-    lookAheadX: 0.06,
-    lookAheadY: 0.18,
-    lookAheadZ: 0.08,
-  },
-  {
-    at: 0.68,
-    j1: 0.34,
-    j2: -0.58,
-    j3: 0.84,
-    j4: -0.34,
-    j5: -0.28,
-    j6: 0.22,
-    groupX: 0.08,
-    groupY: -1.78,
-    groupZ: 0.3,
-    cameraX: -0.1,
-    cameraY: 2.08,
-    cameraZ: 5.95,
-    lookAheadX: 0.18,
-    lookAheadY: 0.18,
-    lookAheadZ: 0.16,
-  },
-  {
-    at: 0.86,
-    j1: -0.04,
-    j2: -0.38,
-    j3: 0.64,
-    j4: 0.08,
-    j5: -0.1,
-    j6: 0.06,
-    groupX: 0.02,
-    groupY: -1.76,
-    groupZ: 0.32,
-    cameraX: -0.24,
-    cameraY: 2.02,
-    cameraZ: 5.55,
-    lookAheadX: 0.12,
-    lookAheadY: 0.12,
-    lookAheadZ: 0.2,
-  },
-  {
-    at: 1,
-    j1: 0.06,
-    j2: -0.28,
-    j3: 0.54,
-    j4: 0.04,
-    j5: -0.04,
-    j6: 0,
-    groupX: 0,
-    groupY: -1.74,
-    groupZ: 0.28,
-    cameraX: -0.18,
-    cameraY: 1.98,
-    cameraZ: 5.45,
-    lookAheadX: 0.08,
-    lookAheadY: 0.1,
-    lookAheadZ: 0.18,
-  },
-];
-
 const PHASE_WINDOWS: ShowcasePhaseWindow[] = [
-  { start: 0.08, peak: 0.16, end: 0.24 },
-  { start: 0.3, peak: 0.38, end: 0.46 },
-  { start: 0.54, peak: 0.62, end: 0.7 },
-  { start: 0.78, peak: 0.86, end: 0.94 },
+  { start: 0.03, peak: 0.15, end: 0.28 },
+  { start: 0.25, peak: 0.38, end: 0.5 },
+  { start: 0.47, peak: 0.6, end: 0.72 },
+  { start: 0.69, peak: 0.84, end: 0.97 },
 ];
 
 function clamp01(value: number) {
@@ -198,37 +86,37 @@ function easeInOutSine(value: number) {
 }
 
 function interpolatePose(progress: number) {
-  const clamped = clamp01(progress);
+  const p = clamp01(progress);
+  const eased = easeInOutSine(p);
+  const theta = eased * Math.PI * 2;
+  const circular = theta - Math.PI / 2;
 
-  for (let i = 0; i < ROBOT_POSE_KEYFRAMES.length - 1; i += 1) {
-    const current = ROBOT_POSE_KEYFRAMES[i];
-    const next = ROBOT_POSE_KEYFRAMES[i + 1];
+  // Arm extends over the first 20% of scroll, then stays fully open for the orbit.
+  const extendFrac = easeInOutSine(Math.min(p * 5, 1.0));
 
-    if (clamped >= current.at && clamped <= next.at) {
-      const rawT = (clamped - current.at) / (next.at - current.at);
-      const t = easeInOutSine(rawT);
-
-      return {
-        j1: THREE.MathUtils.lerp(current.j1, next.j1, t),
-        j2: THREE.MathUtils.lerp(current.j2, next.j2, t),
-        j3: THREE.MathUtils.lerp(current.j3, next.j3, t),
-        j4: THREE.MathUtils.lerp(current.j4, next.j4, t),
-        j5: THREE.MathUtils.lerp(current.j5, next.j5, t),
-        j6: THREE.MathUtils.lerp(current.j6, next.j6, t),
-        groupX: THREE.MathUtils.lerp(current.groupX, next.groupX, t),
-        groupY: THREE.MathUtils.lerp(current.groupY, next.groupY, t),
-        groupZ: THREE.MathUtils.lerp(current.groupZ, next.groupZ, t),
-        cameraX: THREE.MathUtils.lerp(current.cameraX, next.cameraX, t),
-        cameraY: THREE.MathUtils.lerp(current.cameraY, next.cameraY, t),
-        cameraZ: THREE.MathUtils.lerp(current.cameraZ, next.cameraZ, t),
-        lookAheadX: THREE.MathUtils.lerp(current.lookAheadX, next.lookAheadX, t),
-        lookAheadY: THREE.MathUtils.lerp(current.lookAheadY, next.lookAheadY, t),
-        lookAheadZ: THREE.MathUtils.lerp(current.lookAheadZ, next.lookAheadZ, t),
-      };
-    }
-  }
-
-  return ROBOT_POSE_KEYFRAMES[ROBOT_POSE_KEYFRAMES.length - 1];
+  return {
+    // j1 sweeps full 2π around Y — sole driver of the circular XZ orbit.
+    j1: circular,
+    // Shoulder, elbow, forearm held at reach-maximising angles once extended.
+    // Keeping these mostly constant means the end-effector traces a clean circle.
+    j2: -0.92 * extendFrac,
+    j3:  0.30 * extendFrac,
+    j4:  0.62 * extendFrac,
+    // Wrist roll: small sinusoidal variation so the wrist reads as alive.
+    j5:  0.35 * Math.sin(theta),
+    // Tool counter-rotation: cancels some of j1 so the tool keeps facing outward.
+    j6: -circular * 0.3 + 0.25 * Math.sin(theta),
+    groupX: 0,
+    groupY: -1.2,
+    groupZ: 0,
+    // Camera orbits the scene — pushed back to frame the larger robot.
+    cameraX: 1.3  + 1.1  * Math.cos(theta * 0.5),
+    cameraY: 1.8  + 0.5  * Math.sin(theta * 0.45),
+    cameraZ: 6.5  + 1.0  * Math.cos(theta * 0.6),
+    lookAheadX: 0,
+    lookAheadY: 0.1,
+    lookAheadZ: 0,
+  };
 }
 
 function getFallbackWindow(index: number): ShowcasePhaseWindow {
@@ -412,8 +300,8 @@ const RobotRig = ({
       return;
     }
 
-    rootRef.current.scale.setScalar(0.065);
-    rootRef.current.position.set(0.06, -1.95, 0.05);
+    rootRef.current.scale.setScalar(0.06);
+    rootRef.current.position.set(0, -0.4, 0);
     rootRef.current.rotation.copy(rootBaseRotation.current);
   }, []);
 
@@ -434,12 +322,20 @@ const RobotRig = ({
     const applyAxisDelta = (key: JointKey, deltaValue: number) => {
       const joint = jointsRef.current![key];
       const base = baseRotationsRef.current![key];
-      joint.rotation.x = THREE.MathUtils.lerp(joint.rotation.x, base.x, damping);
-      joint.rotation.y = THREE.MathUtils.lerp(joint.rotation.y, base.y, damping);
-      joint.rotation.z = THREE.MathUtils.lerp(joint.rotation.z, base.z, damping);
-      joint.rotation[JOINT_AXES[key]] = THREE.MathUtils.lerp(
-        joint.rotation[JOINT_AXES[key]],
-        base[JOINT_AXES[key]] + deltaValue,
+      const ax = JOINT_AXES[key];
+      joint.rotation.x = THREE.MathUtils.lerp(
+        joint.rotation.x,
+        ax === "x" ? base.x + deltaValue : base.x,
+        damping
+      );
+      joint.rotation.y = THREE.MathUtils.lerp(
+        joint.rotation.y,
+        ax === "y" ? base.y + deltaValue : base.y,
+        damping
+      );
+      joint.rotation.z = THREE.MathUtils.lerp(
+        joint.rotation.z,
+        ax === "z" ? base.z + deltaValue : base.z,
         damping
       );
     };
@@ -513,20 +409,41 @@ const RobotArmSection = () => {
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const [sceneError, setSceneError] = useState(false);
+  const sectionProgress = useMotionValue(0);
   const handleSceneError = useCallback((error?: unknown) => {
     console.error("[RobotArmSection] Falling back to static section", error);
     setSceneError(true);
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  useEffect(() => {
+    const updateProgress = () => {
+      const el = containerRef.current;
+      if (!el) return;
 
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const vignetteOpacity = useTransform(scrollYProgress, [0, 0.4, 1], [0.55, 0.25, 0.55]);
-  const accentGlowOpacity = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [0.08, 0.18, 0.2, 0.1]);
-  const accentGlowScale = useTransform(scrollYProgress, [0, 0.55, 1], [0.92, 1.08, 0.96]);
+      const rect = el.getBoundingClientRect();
+      const range = el.offsetHeight - window.innerHeight;
+      if (range <= 0) {
+        sectionProgress.set(0);
+        return;
+      }
+
+      const progress = THREE.MathUtils.clamp((-rect.top) / range, 0, 1);
+      sectionProgress.set(progress);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, [sectionProgress]);
+
+  const progressWidth = useTransform(sectionProgress, [0, 1], ["0%", "100%"]);
+  const vignetteOpacity = useTransform(sectionProgress, [0, 0.4, 1], [0.55, 0.25, 0.55]);
+  const accentGlowOpacity = useTransform(sectionProgress, [0, 0.35, 0.65, 1], [0.08, 0.18, 0.2, 0.1]);
+  const accentGlowScale = useTransform(sectionProgress, [0, 0.55, 1], [0.92, 1.08, 0.96]);
 
   if (prefersReducedMotion || sceneError) {
     return <StaticShowcaseFallback />;
@@ -548,12 +465,12 @@ const RobotArmSection = () => {
           <Canvas
             shadows
             dpr={[1, 2]}
-            camera={{ fov: 32, near: 0.1, far: 100, position: [1.8, 1.9, 7.4] }}
+            camera={{ fov: 32, near: 0.1, far: 100, position: [2.4, 1.8, 7.5] }}
             gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
             className="absolute inset-0 z-[1]"
           >
             <Suspense fallback={null}>
-              <RobotScene onResolveError={handleSceneError} progress={scrollYProgress} />
+              <RobotScene onResolveError={handleSceneError} progress={sectionProgress} />
             </Suspense>
           </Canvas>
         </SceneErrorBoundary>
@@ -569,7 +486,7 @@ const RobotArmSection = () => {
               highlight={phase.highlight}
               peak={window.peak}
               position={phase.position}
-              progress={scrollYProgress}
+              progress={sectionProgress}
               start={window.start}
               titleKey={phase.titleKey}
             />
