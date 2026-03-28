@@ -26,7 +26,7 @@ import { SHOWCASE_PHASES } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 
 const SCROLL_HEIGHT = "500vh";
-const MODEL_PATH = "/models/fr5_fail.glb";
+const MODEL_PATH = "/models/fr5wip.glb";
 
 type JointKey = "j1" | "j2" | "j3" | "j4" | "j5" | "j6";
 type RotationBase = Record<JointKey, THREE.Euler>;
@@ -62,7 +62,7 @@ interface ShowcasePhaseWindow {
   end: number;
 }
 
-const JOINT_AXES: Record<Exclude<JointKey, "wrist3">, JointAxis> = {
+const JOINT_AXES: Record<JointKey, JointAxis> = {
   j1: "y",
   j2: "z",
   j3: "z",
@@ -356,6 +356,8 @@ const RobotRig = ({
   const rootRef = useRef<THREE.Group>(null);
   const jointsRef = useRef<RobotJointRefs | null>(null);
   const baseRotationsRef = useRef<RotationBase | null>(null);
+  const effectorRef = useRef<THREE.Object3D | null>(null);
+  const baseLinkRef = useRef<THREE.Object3D | null>(null);
   const rootBaseRotation = useRef(new THREE.Euler(0.08, -0.18, 0.02));
   const focusTarget = useRef(new THREE.Vector3());
   const desiredTarget = useRef(new THREE.Vector3());
@@ -364,6 +366,14 @@ const RobotRig = ({
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
 
   useEffect(() => {
+    const findByNames = (...names: string[]) => {
+      for (const name of names) {
+        const found = clone.getObjectByName(name);
+        if (found) return found;
+      }
+      return null;
+    };
+
     clone.traverse((child) => {
       if ("castShadow" in child) {
         child.castShadow = true;
@@ -372,19 +382,20 @@ const RobotRig = ({
     });
 
     const refs = {
-      j1: clone.getObjectByName("j1revolutebone"),
-      j2: clone.getObjectByName("j2revolutebone"),
-      j3: clone.getObjectByName("j3revolutebone"),
-      j4: clone.getObjectByName("j4revolutebone"),
-      j5: clone.getObjectByName("j5revolutebone"),
-      j6: clone.getObjectByName("j6revolutebone"),
+      j1: findByNames("j1.revolute.bone", "j1revolutebone"),
+      j2: findByNames("j2.revolute.bone", "j2revolutebone"),
+      j3: findByNames("j3.revolute.bone", "j3revolutebone"),
+      j4: findByNames("j4.revolute.bone", "j4revolutebone"),
+      j5: findByNames("j5.revolute.bone", "j5revolutebone"),
+      j6: findByNames("j6.revolute.bone", "j6revolutebone"),
     };
-    const wrist3 = clone.getObjectByName("wrist3_Link");
+    const wrist3 = findByNames("wrist3_link", "wrist3_Link");
+    const baseLink = findByNames("base_link");
 
     const missingJoint = Object.entries(refs).find(([, value]) => !value);
 
-    if (missingJoint || !wrist3) {
-      onResolveError(new Error(`Failed to resolve FR5 rig at ${missingJoint?.[0] ?? "wrist3"}`));
+    if (missingJoint || !wrist3 || !baseLink) {
+      onResolveError(new Error(`Failed to resolve FR5 rig at ${missingJoint?.[0] ?? (!wrist3 ? "wrist3_link" : "base_link")}`));
       return;
     }
 
@@ -392,6 +403,8 @@ const RobotRig = ({
     baseRotationsRef.current = Object.fromEntries(
       (Object.keys(refs) as JointKey[]).map((key) => [key, refs[key]!.rotation.clone()])
     ) as RotationBase;
+    effectorRef.current = wrist3;
+    baseLinkRef.current = baseLink;
   }, [clone, onResolveError]);
 
   useEffect(() => {
@@ -405,9 +418,13 @@ const RobotRig = ({
   }, []);
 
   useFrame((_, delta) => {
-    const wrist3 = clone.getObjectByName("wrist3_Link");
-
-    if (!rootRef.current || !jointsRef.current || !baseRotationsRef.current || !wrist3) {
+    if (
+      !rootRef.current ||
+      !jointsRef.current ||
+      !baseRotationsRef.current ||
+      !effectorRef.current ||
+      !baseLinkRef.current
+    ) {
       return;
     }
 
@@ -438,7 +455,7 @@ const RobotRig = ({
     rootRef.current.position.y = THREE.MathUtils.lerp(rootRef.current.position.y, pose.groupY, damping);
     rootRef.current.position.z = THREE.MathUtils.lerp(rootRef.current.position.z, pose.groupZ, damping);
 
-    wrist3.getWorldPosition(desiredTarget.current);
+    effectorRef.current.getWorldPosition(desiredTarget.current);
     desiredTarget.current.x += pose.lookAheadX;
     desiredTarget.current.y += pose.lookAheadY;
     desiredTarget.current.z += pose.lookAheadZ;
@@ -454,6 +471,8 @@ const RobotRig = ({
     return () => {
       jointsRef.current = null;
       baseRotationsRef.current = null;
+      effectorRef.current = null;
+      baseLinkRef.current = null;
     };
   }, []);
 
