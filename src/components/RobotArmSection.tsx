@@ -29,30 +29,21 @@ const SCROLL_HEIGHT = "500vh";
 const MODEL_PATH = "/models/fr5wip.glb";
 
 type JointKey = "j1" | "j2" | "j3" | "j4" | "j5" | "j6";
-type RotationBase = Record<JointKey, THREE.Euler>;
+type ArmJointKey = "j2" | "j3" | "j4";
 type RobotJointRefs = Record<JointKey, THREE.Object3D>;
-type JointAxis = Exclude<keyof THREE.Euler, "order" | "_x" | "_y" | "_z" | "_order" | "isEuler">;
+type ArmAngles = Record<ArmJointKey, number>;
 
 type GLTFResult = GLTF & {
   scene: THREE.Group;
 };
 
-interface RobotPoseKeyframe {
-  j1: number;
-  j2: number;
-  j3: number;
-  j4: number;
-  j5: number;
-  j6: number;
+interface ScenePoseKeyframe {
   groupX: number;
   groupY: number;
   groupZ: number;
   cameraX: number;
   cameraY: number;
   cameraZ: number;
-  lookAheadX: number;
-  lookAheadY: number;
-  lookAheadZ: number;
 }
 
 interface ShowcasePhaseWindow {
@@ -61,14 +52,28 @@ interface ShowcasePhaseWindow {
   end: number;
 }
 
-const JOINT_AXES: Record<JointKey, JointAxis> = {
-  j1: "y",
-  j2: "y",
-  j3: "y",
-  j4: "y",
-  j5: "z",
-  j6: "x",
-};
+/**
+ * Arm geometry measured from the rig's rest pose. The FR5 bones carry tilted rest
+ * rotations, so hinge axes and link angles are derived from the model rather than assumed.
+ */
+interface ArmCalibration {
+  /** Hinge axis of each arm joint (the arm-plane normal), in that bone's own frame. */
+  axes: Record<ArmJointKey, THREE.Vector3>;
+  /** Rest quaternion of each arm joint; joint angles are applied on top of it. */
+  rest: Record<ArmJointKey, THREE.Quaternion>;
+  upperLength: number;
+  forearmLength: number;
+  /** Rest angle of the upper arm and rest elbow bend, measured in the arm plane. */
+  restShoulder: number;
+  restElbow: number;
+  /** Circle traced by the wrist (j4), in arm-plane coordinates centered on the shoulder. */
+  circleCenter: THREE.Vector2;
+  circleRadius: number;
+  /** Circle center in j1's local frame, used as the camera focus. */
+  circleCenterLocal: THREE.Vector3;
+}
+
+const ARM_JOINTS: ArmJointKey[] = ["j2", "j3", "j4"];
 
 const PHASE_WINDOWS: ShowcasePhaseWindow[] = [
   { start: 0.03, peak: 0.15, end: 0.28 },
@@ -85,59 +90,101 @@ function easeInOutSine(value: number) {
   return -(Math.cos(Math.PI * value) - 1) / 2;
 }
 
-// ── 2-link IK for the planar arm (j2/j3 plane) ──
-// Link lengths in model units (URDF meters × 100 from importer scale_unit=0.01).
-const ARM_L1 = 42.5; // shoulder (j2) → elbow (j3)
-const ARM_L2 = 39.5; // elbow (j3) → wrist1 (j4)
-
-// Circle the j4 joint traces in the arm plane (model units).
-// Center at 50 units outward from j2, radius 20 — stays well within reachable workspace.
-const IK_CX = 50.0;
-const IK_CY = 0.0;
-const IK_RADIUS = 20.0;
-
-function solveArm2LinkIK(tx: number, ty: number): { q2: number; q3: number } {
-  const d2 = tx * tx + ty * ty;
-  const cosQ3 = THREE.MathUtils.clamp(
-    (d2 - ARM_L1 * ARM_L1 - ARM_L2 * ARM_L2) / (2 * ARM_L1 * ARM_L2),
-    -1,
-    1,
-  );
-  const sinQ3 = Math.sqrt(1 - cosQ3 * cosQ3);
-  const q3 = Math.atan2(sinQ3, cosQ3); // elbow-up configuration
-  const q2 =
-    Math.atan2(ty, tx) -
-    Math.atan2(ARM_L2 * sinQ3, ARM_L1 + ARM_L2 * cosQ3);
-  return { q2, q3 };
+function wrapAngle(value: number) {
+  return Math.atan2(Math.sin(value), Math.cos(value));
 }
 
-function interpolatePose(progress: number) {
-  const p = clamp01(progress);
-  const eased = easeInOutSine(p);
-  const theta = eased * Math.PI * 2;
+// Radius of the vertical circle traced by the wrist, as a fraction of the arm's full reach.
+const CIRCLE_RADIUS_FRACTION = 0.3;
 
-  // Arm unfolds over the first 20 % of scroll then holds.
-  const extendFrac = easeInOutSine(Math.min(p * 5, 1.0));
+/** Scroll progress → angle travelled around the circle (one full loop over the section). */
+function circleAngle(progress: number) {
+  return easeInOutSine(clamp01(progress)) * Math.PI * 2;
+}
 
-  // ── IK target: j4 traces a circle in the arm plane ──
-  // As alpha sweeps 0→2π the target moves from (70,0) (extended) to (30,0) (folded)
-  // and everywhere in between, forcing j2/j3 to visibly articulate.
-  const alpha = theta;
-  const tx = IK_CX + IK_RADIUS * Math.cos(alpha);
-  const ty = IK_CY + IK_RADIUS * Math.sin(alpha);
-  const { q2, q3 } = solveArm2LinkIK(tx, ty);
+function calibrateArm(joints: RobotJointRefs): ArmCalibration {
+  const { j1 } = joints;
+  // Work in j1's frame: the base stays static, so the arm plane is fixed there.
+  const toJ1 = (bone: THREE.Object3D) => j1.worldToLocal(bone.getWorldPosition(new THREE.Vector3()));
+  const shoulder = toJ1(joints.j2);
+  const elbow = toJ1(joints.j3);
+  const wrist = toJ1(joints.j4);
+
+  const upperArm = elbow.clone().sub(shoulder);
+  const forearm = wrist.clone().sub(elbow);
+  const planeNormal = upperArm.clone().cross(forearm).normalize();
+
+  // Plane basis: v points up (j1 spins about its local Y), u points outward toward the wrist.
+  const v = new THREE.Vector3(0, 1, 0).projectOnPlane(planeNormal).normalize();
+  const reach = wrist.clone().sub(shoulder).projectOnPlane(planeNormal);
+  const u = reach.sub(v.clone().multiplyScalar(reach.dot(v))).normalize();
+  // Right-handed so a positive rotation about the axis turns u toward v.
+  const axis = new THREE.Vector3().crossVectors(u, v);
+
+  const to2D = (point: THREE.Vector3) => {
+    const offset = point.clone().sub(shoulder);
+    return new THREE.Vector2(offset.dot(u), offset.dot(v));
+  };
+  const upper2D = to2D(elbow);
+  const forearm2D = to2D(wrist).sub(upper2D);
+  const restShoulder = Math.atan2(upper2D.y, upper2D.x);
+  const restElbow = wrapAngle(Math.atan2(forearm2D.y, forearm2D.x) - restShoulder);
+
+  const upperLength = upper2D.length();
+  const forearmLength = forearm2D.length();
+  const circleRadius = (upperLength + forearmLength) * CIRCLE_RADIUS_FRACTION;
+  // The rest wrist position is the top of the circle, so progress 0 is the rest pose.
+  const circleCenter = to2D(wrist).sub(new THREE.Vector2(0, circleRadius));
+
+  const j1World = j1.getWorldQuaternion(new THREE.Quaternion());
+  const axes = {} as Record<ArmJointKey, THREE.Vector3>;
+  const rest = {} as Record<ArmJointKey, THREE.Quaternion>;
+  for (const key of ARM_JOINTS) {
+    const bone = joints[key];
+    const relative = j1World.clone().invert().multiply(bone.getWorldQuaternion(new THREE.Quaternion()));
+    axes[key] = axis.clone().applyQuaternion(relative.invert()).normalize();
+    rest[key] = bone.quaternion.clone();
+  }
 
   return {
-    // j1: full sweep for horizontal orbit.
-    j1: theta - Math.PI / 2,
-    // j2, j3: IK-driven — both change throughout the scroll (clear articulation).
-    j2: q2 * extendFrac,
-    j3: q3 * extendFrac,
-    // j4: compensate shoulder+elbow so forearm stays near-horizontal, plus slight oscillation.
-    j4: (-q2 - q3) * extendFrac + 0.3 * Math.sin(2 * alpha) * extendFrac,
-    // j5, j6: cosmetic wrist variation.
-    j5: 0.25 * Math.sin(2 * alpha) * extendFrac,
-    j6: 0.15 * Math.cos(alpha) * extendFrac,
+    axes,
+    rest,
+    upperLength,
+    forearmLength,
+    restShoulder,
+    restElbow,
+    circleCenter,
+    circleRadius,
+    circleCenterLocal: shoulder
+      .clone()
+      .addScaledVector(u, circleCenter.x)
+      .addScaledVector(v, circleCenter.y),
+  };
+}
+
+/** Joint angles (relative to rest) that put the wrist at `theta` around the circle. */
+function solveArmAngles(arm: ArmCalibration, theta: number): ArmAngles {
+  // Start at the top of the circle and run clockwise.
+  const angle = Math.PI / 2 - theta;
+  const tx = arm.circleCenter.x + arm.circleRadius * Math.cos(angle);
+  const ty = arm.circleCenter.y + arm.circleRadius * Math.sin(angle);
+
+  const { upperLength: l1, forearmLength: l2 } = arm;
+  const cosElbow = THREE.MathUtils.clamp((tx * tx + ty * ty - l1 * l1 - l2 * l2) / (2 * l1 * l2), -1, 1);
+  // Keep the elbow on the same side as the rest pose.
+  const elbow = Math.sign(arm.restElbow || -1) * Math.acos(cosElbow);
+  const shoulder = Math.atan2(ty, tx) - Math.atan2(l2 * Math.sin(elbow), l1 + l2 * Math.cos(elbow));
+
+  const j2 = wrapAngle(shoulder - arm.restShoulder);
+  const j3 = wrapAngle(elbow - arm.restElbow);
+  // Counter-rotate the wrist so the camera end keeps its rest orientation.
+  return { j2, j3, j4: -(j2 + j3) };
+}
+
+function interpolatePose(progress: number): ScenePoseKeyframe {
+  const theta = circleAngle(progress);
+
+  return {
     groupX: 0,
     groupY: -1.2,
     groupZ: 0,
@@ -145,9 +192,6 @@ function interpolatePose(progress: number) {
     cameraX: 1.3  + 1.1  * Math.cos(theta * 0.5),
     cameraY: 1.8  + 0.5  * Math.sin(theta * 0.45),
     cameraZ: 6.5  + 1.0  * Math.cos(theta * 0.6),
-    lookAheadX: 0,
-    lookAheadY: 0.1,
-    lookAheadZ: 0,
   };
 }
 
@@ -275,13 +319,12 @@ const RobotRig = ({
 }) => {
   const rootRef = useRef<THREE.Group>(null);
   const jointsRef = useRef<RobotJointRefs | null>(null);
-  const baseRotationsRef = useRef<RotationBase | null>(null);
-  const effectorRef = useRef<THREE.Object3D | null>(null);
-  const baseLinkRef = useRef<THREE.Object3D | null>(null);
+  const armRef = useRef<ArmCalibration | null>(null);
+  const armAngles = useRef<ArmAngles>({ j2: 0, j3: 0, j4: 0 });
   const rootBaseRotation = useRef(new THREE.Euler(0.08, -0.18, 0.02));
-  const frameCount = useRef(0);
   const focusTarget = useRef(new THREE.Vector3());
   const desiredTarget = useRef(new THREE.Vector3());
+  const jointRotation = useRef(new THREE.Quaternion());
   const { camera } = useThree();
   const { scene } = useGLTF(MODEL_PATH) as GLTFResult;
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
@@ -310,22 +353,15 @@ const RobotRig = ({
       j5: findByNames("j5.revolute.bone", "j5revolutebone"),
       j6: findByNames("j6.revolute.bone", "j6revolutebone"),
     };
-    const wrist3 = findByNames("wrist3_link", "wrist3_Link");
-    const baseLink = findByNames("base_link");
-
     const missingJoint = Object.entries(refs).find(([, value]) => !value);
 
-    if (missingJoint || !wrist3 || !baseLink) {
-      onResolveError(new Error(`Failed to resolve FR5 rig at ${missingJoint?.[0] ?? (!wrist3 ? "wrist3_link" : "base_link")}`));
+    if (missingJoint) {
+      onResolveError(new Error(`Failed to resolve FR5 rig at ${missingJoint[0]}`));
       return;
     }
 
     jointsRef.current = refs as RobotJointRefs;
-    baseRotationsRef.current = Object.fromEntries(
-      (Object.keys(refs) as JointKey[]).map((key) => [key, refs[key]!.rotation.clone()])
-    ) as RotationBase;
-    effectorRef.current = wrist3;
-    baseLinkRef.current = baseLink;
+    armRef.current = calibrateArm(jointsRef.current);
   }, [clone, onResolveError]);
 
   useEffect(() => {
@@ -339,85 +375,41 @@ const RobotRig = ({
   }, []);
 
   useFrame((_, delta) => {
-    if (
-      !rootRef.current ||
-      !jointsRef.current ||
-      !baseRotationsRef.current ||
-      !effectorRef.current ||
-      !baseLinkRef.current
-    ) {
+    if (!rootRef.current || !jointsRef.current || !armRef.current) {
       return;
     }
 
+    const arm = armRef.current;
     const pose = interpolatePose(progress.get());
+    const targetAngles = solveArmAngles(arm, circleAngle(progress.get()));
     const damping = 1 - Math.exp(-delta * 5.5);
 
-    const applyAxisDelta = (key: JointKey, deltaValue: number) => {
-      const joint = jointsRef.current![key];
-      const base = baseRotationsRef.current![key];
-      const ax = JOINT_AXES[key];
-      joint.rotation.x = THREE.MathUtils.lerp(
-        joint.rotation.x,
-        ax === "x" ? base.x + deltaValue : base.x,
-        damping
-      );
-      joint.rotation.y = THREE.MathUtils.lerp(
-        joint.rotation.y,
-        ax === "y" ? base.y + deltaValue : base.y,
-        damping
-      );
-      joint.rotation.z = THREE.MathUtils.lerp(
-        joint.rotation.z,
-        ax === "z" ? base.z + deltaValue : base.z,
-        damping
-      );
-    };
-
-    applyAxisDelta("j1", pose.j1);
-    applyAxisDelta("j2", pose.j2);
-    applyAxisDelta("j3", pose.j3);
-    applyAxisDelta("j4", pose.j4);
-    applyAxisDelta("j5", pose.j5);
-    applyAxisDelta("j6", pose.j6);
+    // j1 (base yaw), j5 and j6 stay at rest; the shoulder, elbow and wrist trace the circle.
+    for (const key of ARM_JOINTS) {
+      armAngles.current[key] = THREE.MathUtils.lerp(armAngles.current[key], targetAngles[key], damping);
+      jointsRef.current[key].quaternion
+        .copy(arm.rest[key])
+        .multiply(jointRotation.current.setFromAxisAngle(arm.axes[key], armAngles.current[key]));
+    }
 
     rootRef.current.position.x = THREE.MathUtils.lerp(rootRef.current.position.x, pose.groupX, damping);
     rootRef.current.position.y = THREE.MathUtils.lerp(rootRef.current.position.y, pose.groupY, damping);
     rootRef.current.position.z = THREE.MathUtils.lerp(rootRef.current.position.z, pose.groupZ, damping);
 
-    effectorRef.current.getWorldPosition(desiredTarget.current);
-    desiredTarget.current.x += pose.lookAheadX;
-    desiredTarget.current.y += pose.lookAheadY;
-    desiredTarget.current.z += pose.lookAheadZ;
+    // Frame the circle itself rather than chasing the moving wrist, so the loop reads on screen.
+    jointsRef.current.j1.localToWorld(desiredTarget.current.copy(arm.circleCenterLocal));
     focusTarget.current.lerp(desiredTarget.current, damping);
 
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, pose.cameraX, damping);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, pose.cameraY, damping);
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, pose.cameraZ, damping);
     camera.lookAt(focusTarget.current);
-
-    // ── Numerical validation: end-effector path vs base center ──
-    frameCount.current++;
-    if (frameCount.current % 60 === 0 && frameCount.current <= 600) {
-      const ew = new THREE.Vector3();
-      const bw = new THREE.Vector3();
-      effectorRef.current.getWorldPosition(ew);
-      baseLinkRef.current.getWorldPosition(bw);
-      const dx = ew.x - bw.x;
-      const dy = ew.y - bw.y;
-      const dz = ew.z - bw.z;
-      const hDist = Math.sqrt(dx * dx + dz * dz);
-      console.log(
-        `[FK-validate] p=${progress.get().toFixed(3)} hDist=${hDist.toFixed(3)} vOff=${dy.toFixed(3)} effector=(${ew.x.toFixed(2)},${ew.y.toFixed(2)},${ew.z.toFixed(2)}) base=(${bw.x.toFixed(2)},${bw.y.toFixed(2)},${bw.z.toFixed(2)})`,
-      );
-    }
   });
 
   useEffect(() => {
     return () => {
       jointsRef.current = null;
-      baseRotationsRef.current = null;
-      effectorRef.current = null;
-      baseLinkRef.current = null;
+      armRef.current = null;
     };
   }, []);
 
