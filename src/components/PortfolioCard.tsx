@@ -29,9 +29,7 @@ const PortfolioCard = ({ item, index, onClick }: PortfolioCardProps) => {
           onClick();
         }
       }}
-      className={`group relative cursor-pointer overflow-hidden ${
-        item.orientation === "portrait" ? "aspect-[3/4]" : "aspect-[4/3]"
-      }`}
+      className="group relative cursor-pointer overflow-hidden aspect-[3/4]"
     >
       {item.youtubeId ? (
         <iframe

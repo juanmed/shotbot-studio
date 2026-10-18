@@ -180,7 +180,9 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "scandic-launch",
     poster: portfolio4,
-    mediaType: "image",
+    youtubeId: "fg5H18wtEnM",
+    hideOverlay: true,
+    mediaType: "video",
     orientation: "landscape",
     titleKey: "portfolio.item.scandicLaunch",
     categoryKey: "portfolio.cat.corporate",
@@ -192,6 +194,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "gold-gala",
     poster: portfolio5,
+    youtubeId: "_Tln3TFsFH0",
+    hideOverlay: true,
     mediaType: "video",
     orientation: "portrait",
     titleKey: "portfolio.item.goldGala",
@@ -204,6 +208,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "brand-reveal",
     poster: portfolio6,
+    youtubeId: "TpKQTbpT5ko",
+    hideOverlay: true,
     mediaType: "video",
     orientation: "landscape",
     titleKey: "portfolio.item.brandReveal",
