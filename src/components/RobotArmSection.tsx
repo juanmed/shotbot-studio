@@ -61,16 +61,12 @@ interface ArmCalibration {
   axes: Record<ArmJointKey, THREE.Vector3>;
   /** Rest quaternion of each arm joint; joint angles are applied on top of it. */
   rest: Record<ArmJointKey, THREE.Quaternion>;
-  upperLength: number;
-  forearmLength: number;
-  /** Rest angle of the upper arm and rest elbow bend, measured in the arm plane. */
+  /** Rest angle of the upper arm and rest elbow/wrist bends, measured in the arm plane. */
   restShoulder: number;
   restElbow: number;
-  /** Circle traced by the wrist (j4), in arm-plane coordinates centered on the shoulder. */
-  circleCenter: THREE.Vector2;
-  circleRadius: number;
-  /** Circle center in j1's local frame, used as the camera focus. */
-  circleCenterLocal: THREE.Vector3;
+  restWrist: number;
+  /** Center of the semicircle swept by the extended arm, in j1's local frame; the camera focus. */
+  focusLocal: THREE.Vector3;
 }
 
 const ARM_JOINTS: ArmJointKey[] = ["j2", "j3", "j4"];
@@ -94,12 +90,9 @@ function wrapAngle(value: number) {
   return Math.atan2(Math.sin(value), Math.cos(value));
 }
 
-// Radius of the vertical circle traced by the wrist, as a fraction of the arm's full reach.
-const CIRCLE_RADIUS_FRACTION = 0.3;
-
-/** Scroll progress → angle travelled around the circle (one full loop over the section). */
-function circleAngle(progress: number) {
-  return easeInOutSine(clamp01(progress)) * Math.PI * 2;
+/** Scroll progress → shoulder angle in the arm plane: 0 is horizontal on one side, π on the other. */
+function sweepAngle(progress: number) {
+  return easeInOutSine(clamp01(progress)) * Math.PI;
 }
 
 function calibrateArm(joints: RobotJointRefs): ArmCalibration {
@@ -109,6 +102,7 @@ function calibrateArm(joints: RobotJointRefs): ArmCalibration {
   const shoulder = toJ1(joints.j2);
   const elbow = toJ1(joints.j3);
   const wrist = toJ1(joints.j4);
+  const wristTip = toJ1(joints.j5);
 
   const upperArm = elbow.clone().sub(shoulder);
   const forearm = wrist.clone().sub(elbow);
@@ -127,14 +121,13 @@ function calibrateArm(joints: RobotJointRefs): ArmCalibration {
   };
   const upper2D = to2D(elbow);
   const forearm2D = to2D(wrist).sub(upper2D);
+  const wrist2D = to2D(wristTip).sub(to2D(wrist));
+  const forearmAngle = Math.atan2(forearm2D.y, forearm2D.x);
   const restShoulder = Math.atan2(upper2D.y, upper2D.x);
-  const restElbow = wrapAngle(Math.atan2(forearm2D.y, forearm2D.x) - restShoulder);
+  const restElbow = wrapAngle(forearmAngle - restShoulder);
+  const restWrist = wrapAngle(Math.atan2(wrist2D.y, wrist2D.x) - forearmAngle);
 
-  const upperLength = upper2D.length();
-  const forearmLength = forearm2D.length();
-  const circleRadius = (upperLength + forearmLength) * CIRCLE_RADIUS_FRACTION;
-  // The rest wrist position is the top of the circle, so progress 0 is the rest pose.
-  const circleCenter = to2D(wrist).sub(new THREE.Vector2(0, circleRadius));
+  const reachLength = upper2D.length() + forearm2D.length();
 
   const j1World = j1.getWorldQuaternion(new THREE.Quaternion());
   const axes = {} as Record<ArmJointKey, THREE.Vector3>;
@@ -149,40 +142,26 @@ function calibrateArm(joints: RobotJointRefs): ArmCalibration {
   return {
     axes,
     rest,
-    upperLength,
-    forearmLength,
     restShoulder,
     restElbow,
-    circleCenter,
-    circleRadius,
-    circleCenterLocal: shoulder
-      .clone()
-      .addScaledVector(u, circleCenter.x)
-      .addScaledVector(v, circleCenter.y),
+    restWrist,
+    // Halfway up the semicircle, so both horizontal ends and the top stay in frame.
+    focusLocal: shoulder.clone().addScaledVector(v, reachLength / 2),
   };
 }
 
-/** Joint angles (relative to rest) that put the wrist at `theta` around the circle. */
-function solveArmAngles(arm: ArmCalibration, theta: number): ArmAngles {
-  // Start at the top of the circle and run clockwise.
-  const angle = Math.PI / 2 - theta;
-  const tx = arm.circleCenter.x + arm.circleRadius * Math.cos(angle);
-  const ty = arm.circleCenter.y + arm.circleRadius * Math.sin(angle);
-
-  const { upperLength: l1, forearmLength: l2 } = arm;
-  const cosElbow = THREE.MathUtils.clamp((tx * tx + ty * ty - l1 * l1 - l2 * l2) / (2 * l1 * l2), -1, 1);
-  // Keep the elbow on the same side as the rest pose.
-  const elbow = Math.sign(arm.restElbow || -1) * Math.acos(cosElbow);
-  const shoulder = Math.atan2(ty, tx) - Math.atan2(l2 * Math.sin(elbow), l1 + l2 * Math.cos(elbow));
-
-  const j2 = wrapAngle(shoulder - arm.restShoulder);
-  const j3 = wrapAngle(elbow - arm.restElbow);
-  // Counter-rotate the wrist so the camera end keeps its rest orientation.
-  return { j2, j3, j4: -(j2 + j3) };
+/** Joint angles (relative to rest) for the extended arm at shoulder angle `sweep`. */
+function solveArmAngles(arm: ArmCalibration, sweep: number): ArmAngles {
+  // Only the shoulder moves; the elbow and wrist hold the arm straight.
+  return {
+    j2: wrapAngle(sweep - arm.restShoulder),
+    j3: -arm.restElbow,
+    j4: -arm.restWrist,
+  };
 }
 
 function interpolatePose(progress: number): ScenePoseKeyframe {
-  const theta = circleAngle(progress);
+  const theta = easeInOutSine(clamp01(progress)) * Math.PI * 2;
 
   return {
     groupX: 0,
@@ -381,10 +360,10 @@ const RobotRig = ({
 
     const arm = armRef.current;
     const pose = interpolatePose(progress.get());
-    const targetAngles = solveArmAngles(arm, circleAngle(progress.get()));
+    const targetAngles = solveArmAngles(arm, sweepAngle(progress.get()));
     const damping = 1 - Math.exp(-delta * 5.5);
 
-    // j1 (base yaw), j5 and j6 stay at rest; the shoulder, elbow and wrist trace the circle.
+    // j1 (base yaw), j5 and j6 stay at rest; the shoulder sweeps the straightened arm.
     for (const key of ARM_JOINTS) {
       armAngles.current[key] = THREE.MathUtils.lerp(armAngles.current[key], targetAngles[key], damping);
       jointsRef.current[key].quaternion
@@ -396,8 +375,8 @@ const RobotRig = ({
     rootRef.current.position.y = THREE.MathUtils.lerp(rootRef.current.position.y, pose.groupY, damping);
     rootRef.current.position.z = THREE.MathUtils.lerp(rootRef.current.position.z, pose.groupZ, damping);
 
-    // Frame the circle itself rather than chasing the moving wrist, so the loop reads on screen.
-    jointsRef.current.j1.localToWorld(desiredTarget.current.copy(arm.circleCenterLocal));
+    // Frame the whole semicircle rather than chasing the moving wrist, so the sweep reads on screen.
+    jointsRef.current.j1.localToWorld(desiredTarget.current.copy(arm.focusLocal));
     focusTarget.current.lerp(desiredTarget.current, damping);
 
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, pose.cameraX, damping);
