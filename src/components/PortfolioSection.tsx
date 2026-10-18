@@ -64,7 +64,7 @@ const PortfolioSection = () => {
           ))}
         </motion.div>
 
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-2 md:gap-3 space-y-2 md:space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 items-start gap-2 md:gap-3">
           {filtered.map((item, i) => (
             <div key={item.id} className="break-inside-avoid">
               <PortfolioCard item={item} index={i} onClick={() => openLightbox(i)} />
