@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Play } from "lucide-react";
 import type { PortfolioItem } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
+import { buildPortfolioEmbedUrl } from "@/lib/videoEmbed";
 
 interface PortfolioCardProps {
   item: PortfolioItem;
@@ -19,20 +20,38 @@ const PortfolioCard = ({ item, index, onClick }: PortfolioCardProps) => {
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.7, delay: index * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
       onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label={item.youtubeId ? `Demo ${index + 1}` : t(item.titleKey)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onClick();
+        }
+      }}
       className={`group relative cursor-pointer overflow-hidden ${
         item.orientation === "portrait" ? "aspect-[3/4]" : "aspect-[4/3]"
       }`}
     >
-      {/* Image with smooth zoom */}
-      <img
+      {item.youtubeId ? (
+        <iframe
+          src={buildPortfolioEmbedUrl(item.youtubeId)}
+          title={`Demo ${index + 1}`}
+          allow="autoplay; encrypted-media"
+          loading="lazy"
+          tabIndex={-1}
+          className="absolute inset-0 w-full h-full pointer-events-none border-0"
+        />
+      ) : <img
         src={item.poster}
         alt={t(item.titleKey)}
         loading="lazy"
         width={item.width}
         height={item.height}
         className="w-full h-full object-cover transition-all duration-[900ms] ease-out group-hover:scale-[1.06] group-hover:brightness-75"
-      />
+      />}
 
+      {!item.hideOverlay && <>
       {/* Hover overlay with blur sweep */}
       <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-600" />
 
@@ -57,6 +76,7 @@ const PortfolioCard = ({ item, index, onClick }: PortfolioCardProps) => {
           {t(item.titleKey)}
         </h3>
       </div>
+      </>}
     </motion.div>
   );
 };

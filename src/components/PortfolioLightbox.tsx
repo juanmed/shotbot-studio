@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { PortfolioItem } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
+import { buildPortfolioEmbedUrl } from "@/lib/videoEmbed";
 
 interface PortfolioLightboxProps {
   items: PortfolioItem[];
@@ -104,15 +105,23 @@ const PortfolioLightbox = ({ items, activeIndex, onClose, onNext, onPrev }: Port
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            {item.youtubeId ? (
+              <iframe
+                src={buildPortfolioEmbedUrl(item.youtubeId)}
+                title={`Demo ${(activeIndex ?? 0) + 1}`}
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+                className={`border-0 ${item.orientation === "portrait" ? "w-[min(420px,85vw)] aspect-[3/4]" : "w-[min(900px,90vw)] aspect-[4/3]"}`}
+              />
+            ) : <img
               src={item.poster}
               alt={t(item.titleKey)}
               className="w-full h-full object-contain"
               width={item.width}
               height={item.height}
-            />
+            />}
 
-            <motion.div
+            {!item.hideOverlay && <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.4 }}
@@ -129,7 +138,7 @@ const PortfolioLightbox = ({ items, activeIndex, onClose, onNext, onPrev }: Port
                   {t(item.descriptionKey)}
                 </p>
               )}
-            </motion.div>
+            </motion.div>}
           </motion.div>
 
           <motion.div

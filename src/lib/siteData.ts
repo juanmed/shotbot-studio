@@ -33,6 +33,8 @@ export interface PortfolioItem {
   poster: string;
   /** Optional source URL for video playback (e.g. mp4, YouTube embed) */
   sourceUrl?: string;
+  youtubeId?: string;
+  hideOverlay?: boolean;
   mediaType: MediaType;
   orientation: MediaOrientation;
   titleKey: string;
@@ -136,6 +138,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "fashion-night",
     poster: portfolio1,
+    youtubeId: "VT5X10UASmc",
+    hideOverlay: true,
     mediaType: "video",
     orientation: "portrait",
     titleKey: "portfolio.item.fashionNight",
@@ -148,6 +152,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "club-noir",
     poster: portfolio2,
+    youtubeId: "s1afdNqVXgk",
+    hideOverlay: true,
     mediaType: "video",
     orientation: "landscape",
     titleKey: "portfolio.item.clubNoir",
@@ -160,6 +166,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
   {
     id: "laurent-wedding",
     poster: portfolio3,
+    youtubeId: "Xji-_-xq0Tg",
+    hideOverlay: true,
     mediaType: "video",
     orientation: "portrait",
     titleKey: "portfolio.item.laurentWedding",
