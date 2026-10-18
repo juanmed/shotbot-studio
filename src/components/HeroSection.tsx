@@ -3,12 +3,10 @@ import { useRef } from "react";
 import { BRAND_NAME } from "@/lib/constants";
 import { HERO_VIDEO_IDS } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
+import { buildPortfolioEmbedUrl } from "@/lib/videoEmbed";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const VIDEO_IDS = HERO_VIDEO_IDS;
-
-const buildEmbedUrl = (id: string) =>
-  `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&showinfo=0&rel=0&playsinline=1&modestbranding=1&iv_load_policy=3&disablekb=1`;
 
 interface VideoColumnProps {
   videoId: string;
@@ -23,7 +21,7 @@ const VideoColumn = ({ videoId, index }: VideoColumnProps) => (
     className="relative h-full flex-1 min-w-0 overflow-hidden"
   >
     <iframe
-      src={buildEmbedUrl(videoId)}
+      src={buildPortfolioEmbedUrl(videoId)}
       title={`${BRAND_NAME} showcase ${index + 1}`}
       allow="autoplay; encrypted-media"
       allowFullScreen={false}

@@ -32,14 +32,17 @@ const PortfolioCard = ({ item, index, onClick }: PortfolioCardProps) => {
       className="group relative cursor-pointer overflow-hidden aspect-[3/4]"
     >
       {item.youtubeId ? (
-        <iframe
-          src={buildPortfolioEmbedUrl(item.youtubeId)}
-          title={`Demo ${index + 1}`}
-          allow="autoplay; encrypted-media"
-          loading="lazy"
-          tabIndex={-1}
-          className="absolute inset-0 w-full h-full pointer-events-none border-0"
-        />
+        <>
+          <iframe
+            src={buildPortfolioEmbedUrl(item.youtubeId)}
+            title={`Demo ${index + 1}`}
+            allow="autoplay; encrypted-media"
+            loading="lazy"
+            tabIndex={-1}
+            className="absolute w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
+          />
+          <div className="absolute inset-0 z-10" aria-hidden="true" />
+        </>
       ) : <img
         src={item.poster}
         alt={t(item.titleKey)}

@@ -106,13 +106,18 @@ const PortfolioLightbox = ({ items, activeIndex, onClose, onNext, onPrev }: Port
             onClick={(e) => e.stopPropagation()}
           >
             {item.youtubeId ? (
-              <iframe
-                src={buildPortfolioEmbedUrl(item.youtubeId)}
-                title={`Demo ${(activeIndex ?? 0) + 1}`}
-                allow="autoplay; encrypted-media; fullscreen"
-                allowFullScreen
-                className={`border-0 ${item.orientation === "portrait" ? "w-[min(420px,85vw)] aspect-[3/4]" : "w-[min(900px,90vw)] aspect-[4/3]"}`}
-              />
+              <div
+                className={`relative overflow-hidden ${item.orientation === "portrait" ? "w-[min(420px,85vw)] aspect-[3/4]" : "w-[min(900px,90vw)] aspect-[4/3]"}`}
+              >
+                <iframe
+                  src={buildPortfolioEmbedUrl(item.youtubeId)}
+                  title={`Demo ${(activeIndex ?? 0) + 1}`}
+                  allow="autoplay; encrypted-media"
+                  tabIndex={-1}
+                  className="absolute w-[200%] h-[200%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
+                />
+                <div className="absolute inset-0 z-10" aria-hidden="true" />
+              </div>
             ) : <img
               src={item.poster}
               alt={t(item.titleKey)}
