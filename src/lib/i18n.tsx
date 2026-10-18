@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { BRAND_NAME } from "@/lib/constants";
 
 export type Locale = "ko" | "en";
 
@@ -284,7 +285,7 @@ const translations: Record<Locale, Translations> = {
     "testimonials.2.quote": "The most talked-about content from our brand launch. Absolutely stunning.",
     "testimonials.2.name": "Seungwoo Lee",
     "testimonials.2.role": "Marketing Director",
-    "testimonials.3.quote": "We booked Shotbot for our club opening. The social media response was explosive.",
+    "testimonials.3.quote": `We booked ${BRAND_NAME} for our club opening. The social media response was explosive.`,
     "testimonials.3.name": "Soyeon Kim",
     "testimonials.3.role": "Event Planner",
 
