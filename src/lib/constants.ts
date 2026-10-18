@@ -2,7 +2,7 @@
 // Site Configuration — Change here to update everywhere
 // ==========================================
 
-export const BRAND_NAME = "Selkabot";
+export const BRAND_NAME = "SelkaBot";
 
 export const SITE_CONFIG = {
   brand: BRAND_NAME,
