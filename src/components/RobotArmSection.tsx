@@ -85,33 +85,63 @@ function easeInOutSine(value: number) {
   return -(Math.cos(Math.PI * value) - 1) / 2;
 }
 
+// ── 2-link IK for the planar arm (j2/j3 plane) ──
+// Link lengths in model units (URDF meters × 100 from importer scale_unit=0.01).
+const ARM_L1 = 42.5; // shoulder (j2) → elbow (j3)
+const ARM_L2 = 39.5; // elbow (j3) → wrist1 (j4)
+
+// Circle the j4 joint traces in the arm plane (model units).
+// Center at 50 units outward from j2, radius 20 — stays well within reachable workspace.
+const IK_CX = 50.0;
+const IK_CY = 0.0;
+const IK_RADIUS = 20.0;
+
+function solveArm2LinkIK(tx: number, ty: number): { q2: number; q3: number } {
+  const d2 = tx * tx + ty * ty;
+  const cosQ3 = THREE.MathUtils.clamp(
+    (d2 - ARM_L1 * ARM_L1 - ARM_L2 * ARM_L2) / (2 * ARM_L1 * ARM_L2),
+    -1,
+    1,
+  );
+  const sinQ3 = Math.sqrt(1 - cosQ3 * cosQ3);
+  const q3 = Math.atan2(sinQ3, cosQ3); // elbow-up configuration
+  const q2 =
+    Math.atan2(ty, tx) -
+    Math.atan2(ARM_L2 * sinQ3, ARM_L1 + ARM_L2 * cosQ3);
+  return { q2, q3 };
+}
+
 function interpolatePose(progress: number) {
   const p = clamp01(progress);
   const eased = easeInOutSine(p);
   const theta = eased * Math.PI * 2;
-  const circular = theta - Math.PI / 2;
 
-  // Arm extends over the first 20% of scroll, then stays fully open for the orbit.
+  // Arm unfolds over the first 20 % of scroll then holds.
   const extendFrac = easeInOutSine(Math.min(p * 5, 1.0));
 
+  // ── IK target: j4 traces a circle in the arm plane ──
+  // As alpha sweeps 0→2π the target moves from (70,0) (extended) to (30,0) (folded)
+  // and everywhere in between, forcing j2/j3 to visibly articulate.
+  const alpha = theta;
+  const tx = IK_CX + IK_RADIUS * Math.cos(alpha);
+  const ty = IK_CY + IK_RADIUS * Math.sin(alpha);
+  const { q2, q3 } = solveArm2LinkIK(tx, ty);
+
   return {
-    // j1 sweeps full 2π around Y — sole driver of the circular XZ orbit.
-    j1: circular,
-    // FK-derived reach-maximising angles (0.920m radius, 0.087m droop):
-    //   j2=-0.35: shoulder 20° above horizontal
-    //   j3= 0.50: visible elbow bend (29°)
-    //   j4=-0.15: wrist compensates to keep end-effector near level
-    j2: -0.35 * extendFrac,
-    j3:  0.50 * extendFrac,
-    j4: -0.15 * extendFrac,
-    // Wrist roll: small sinusoidal variation so the wrist reads as alive.
-    j5:  0.35 * Math.sin(theta),
-    // Tool counter-rotation: cancels some of j1 so the tool keeps facing outward.
-    j6: -circular * 0.3 + 0.25 * Math.sin(theta),
+    // j1: full sweep for horizontal orbit.
+    j1: theta - Math.PI / 2,
+    // j2, j3: IK-driven — both change throughout the scroll (clear articulation).
+    j2: q2 * extendFrac,
+    j3: q3 * extendFrac,
+    // j4: compensate shoulder+elbow so forearm stays near-horizontal, plus slight oscillation.
+    j4: (-q2 - q3) * extendFrac + 0.3 * Math.sin(2 * alpha) * extendFrac,
+    // j5, j6: cosmetic wrist variation.
+    j5: 0.25 * Math.sin(2 * alpha) * extendFrac,
+    j6: 0.15 * Math.cos(alpha) * extendFrac,
     groupX: 0,
     groupY: -1.2,
     groupZ: 0,
-    // Camera orbits the scene — pushed back to frame the larger robot.
+    // Camera pulled back to frame the 3×-scaled robot.
     cameraX: 1.3  + 1.1  * Math.cos(theta * 0.5),
     cameraY: 1.8  + 0.5  * Math.sin(theta * 0.45),
     cameraZ: 6.5  + 1.0  * Math.cos(theta * 0.6),
@@ -249,6 +279,7 @@ const RobotRig = ({
   const effectorRef = useRef<THREE.Object3D | null>(null);
   const baseLinkRef = useRef<THREE.Object3D | null>(null);
   const rootBaseRotation = useRef(new THREE.Euler(0.08, -0.18, 0.02));
+  const frameCount = useRef(0);
   const focusTarget = useRef(new THREE.Vector3());
   const desiredTarget = useRef(new THREE.Vector3());
   const { camera } = useThree();
@@ -363,6 +394,22 @@ const RobotRig = ({
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, pose.cameraY, damping);
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, pose.cameraZ, damping);
     camera.lookAt(focusTarget.current);
+
+    // ── Numerical validation: end-effector path vs base center ──
+    frameCount.current++;
+    if (frameCount.current % 60 === 0 && frameCount.current <= 600) {
+      const ew = new THREE.Vector3();
+      const bw = new THREE.Vector3();
+      effectorRef.current.getWorldPosition(ew);
+      baseLinkRef.current.getWorldPosition(bw);
+      const dx = ew.x - bw.x;
+      const dy = ew.y - bw.y;
+      const dz = ew.z - bw.z;
+      const hDist = Math.sqrt(dx * dx + dz * dz);
+      console.log(
+        `[FK-validate] p=${progress.get().toFixed(3)} hDist=${hDist.toFixed(3)} vOff=${dy.toFixed(3)} effector=(${ew.x.toFixed(2)},${ew.y.toFixed(2)},${ew.z.toFixed(2)}) base=(${bw.x.toFixed(2)},${bw.y.toFixed(2)},${bw.z.toFixed(2)})`,
+      );
+    }
   });
 
   useEffect(() => {
