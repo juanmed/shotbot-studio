@@ -1,6 +1,5 @@
-import { BRAND_NAME, SITE_CONFIG } from "@/lib/constants";
+import { BRAND_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
-import { Instagram } from "lucide-react";
 
 const Footer = () => {
   const { t } = useI18n();
@@ -12,15 +11,6 @@ const Footer = () => {
           {BRAND_NAME}
         </p>
         <div className="flex items-center gap-6 text-muted-foreground">
-          <a
-            href={SITE_CONFIG.contact.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-foreground transition-colors"
-            aria-label="Instagram"
-          >
-            <Instagram size={16} />
-          </a>
           <a href="#faq" className="font-body text-xs hover:text-foreground transition-colors">
             {t("nav.faq")}
           </a>

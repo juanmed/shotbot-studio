@@ -10,22 +10,59 @@ const ContactSection = () => {
   const { toast } = useToast();
   const { t } = useI18n();
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    emailOrPhone: "",
+    email: "",
+    phone: "",
     eventType: "",
     date: "",
     location: "",
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast({
-      title: t("contact.toastTitle"),
-      description: t("contact.toastDesc", { name: formData.name }),
-    });
-    setSubmitted(true);
+    // Honeypot: real visitors never see or tick this box
+    if ((e.currentTarget.elements.namedItem("botcheck") as HTMLInputElement | null)?.checked) return;
+
+    const eventType = EVENT_TYPES.find((et) => et.value === formData.eventType);
+    setSending(true);
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: SITE_CONFIG.web3formsKey,
+          subject: `New ${BRAND_NAME} inquiry from ${formData.name}`,
+          from_name: `${BRAND_NAME} website`,
+          replyto: formData.email,
+          Name: formData.name,
+          Email: formData.email,
+          Phone: formData.phone || "-",
+          "Event type": eventType ? t(eventType.labelKey) : formData.eventType,
+          "Event date": formData.date || "-",
+          Location: formData.location || "-",
+          Message: formData.message || "-",
+        }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) throw new Error(result.message);
+
+      toast({
+        title: t("contact.toastTitle"),
+        description: t("contact.toastDesc", { name: formData.name }),
+      });
+      setSubmitted(true);
+    } catch {
+      toast({
+        title: t("contact.errorTitle"),
+        description: t("contact.errorDesc"),
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleChange = (
@@ -89,7 +126,7 @@ const ContactSection = () => {
                   <button
                     onClick={() => {
                       setSubmitted(false);
-                      setFormData({ name: "", emailOrPhone: "", eventType: "", date: "", location: "", message: "" });
+                      setFormData({ name: "", email: "", phone: "", eventType: "", date: "", location: "", message: "" });
                     }}
                     className="mt-8 font-body text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground border-b border-border hover:border-foreground/30 pb-1 transition-colors"
                   >
@@ -99,6 +136,7 @@ const ContactSection = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-1">
+                <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <input
                     type="text"
@@ -112,18 +150,28 @@ const ContactSection = () => {
                     autoComplete="name"
                   />
                   <input
-                    type="text"
-                    name="emailOrPhone"
-                    placeholder={t("contact.emailOrPhone")}
+                    type="email"
+                    name="email"
+                    placeholder={t("contact.email")}
                     required
                     maxLength={255}
-                    value={formData.emailOrPhone}
+                    value={formData.email}
                     onChange={handleChange}
                     className={inputClasses}
                     autoComplete="email"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder={t("contact.phone")}
+                    maxLength={30}
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={inputClasses}
+                    autoComplete="tel"
+                  />
                   <select
                     name="eventType"
                     required
@@ -140,6 +188,8 @@ const ContactSection = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
                   <input
                     type="date"
                     name="date"
@@ -148,17 +198,17 @@ const ContactSection = () => {
                     className={inputClasses}
                     aria-label={t("contact.date")}
                   />
+                  <input
+                    type="text"
+                    name="location"
+                    placeholder={t("contact.location")}
+                    maxLength={200}
+                    value={formData.location}
+                    onChange={handleChange}
+                    className={inputClasses}
+                    autoComplete="address-level2"
+                  />
                 </div>
-                <input
-                  type="text"
-                  name="location"
-                  placeholder={t("contact.location")}
-                  maxLength={200}
-                  value={formData.location}
-                  onChange={handleChange}
-                  className={inputClasses}
-                  autoComplete="address-level2"
-                />
                 <textarea
                   name="message"
                   placeholder={t("contact.message")}
@@ -171,9 +221,10 @@ const ContactSection = () => {
 
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-3 bg-foreground text-background py-4 mt-6 font-display font-700 text-[11px] tracking-[0.2em] uppercase hover:bg-foreground/90 transition-colors duration-300 group"
+                  disabled={sending}
+                  className="w-full flex items-center justify-center gap-3 bg-foreground text-background py-4 mt-6 font-display font-700 text-[11px] tracking-[0.2em] uppercase hover:bg-foreground/90 disabled:opacity-60 disabled:cursor-wait transition-colors duration-300 group"
                 >
-                  {t("contact.send")}
+                  {sending ? t("contact.sending") : t("contact.send")}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
 
