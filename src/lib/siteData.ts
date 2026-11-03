@@ -10,7 +10,7 @@
  * All media assets are imported at the top for easy swapping.
  */
 
-import { Facebook, MessageCircle, Mail, type LucideIcon } from "lucide-react";
+import { Facebook, Instagram, MessageCircle, Mail, type LucideIcon } from "lucide-react";
 
 // ── Asset imports (swap these when real media is ready) ──────────
 import portfolio1 from "@/assets/portfolio-1.jpg";
@@ -300,7 +300,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 
 export const QUICK_CONTACT_LINKS: QuickContactLink[] = [
   { icon: MessageCircle, labelKey: "contact.quickKakao", href: SITE_CONFIG.contact.kakao, external: true },
-  { icon: MessageCircle, labelKey: "contact.quickWhatsapp", href: SITE_CONFIG.contact.whatsapp, external: true },
+  { icon: Instagram, labelKey: "contact.quickInstagram", href: SITE_CONFIG.contact.instagram, external: true },
   { icon: Facebook, labelKey: "contact.quickFacebook", href: SITE_CONFIG.contact.facebook, external: true },
   { icon: Mail, labelKey: "contact.quickEmail", href: `mailto:${SITE_CONFIG.contact.email}`, external: false },
 ];
