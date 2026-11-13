@@ -5,12 +5,22 @@ import { BRAND_NAME, SITE_CONFIG } from "@/lib/constants";
 import { QUICK_CONTACT_LINKS, EVENT_TYPES } from "@/lib/siteData";
 import { useI18n } from "@/lib/i18n";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const ContactSection = () => {
   const { toast } = useToast();
   const { t } = useI18n();
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,6 +35,10 @@ const ContactSection = () => {
     e.preventDefault();
     // Honeypot: real visitors never see or tick this box
     if ((e.currentTarget.elements.namedItem("botcheck") as HTMLInputElement | null)?.checked) return;
+    if (!consent) {
+      setConsentError(true);
+      return;
+    }
 
     const eventType = EVENT_TYPES.find((et) => et.value === formData.eventType);
     setSending(true);
@@ -44,6 +58,8 @@ const ContactSection = () => {
           "Event date": formData.date || "-",
           Location: formData.location || "-",
           Message: formData.message || "-",
+          "Privacy policy consent": "Yes",
+          "Consent timestamp": new Date().toISOString(),
         }),
       });
       const result = await res.json();
@@ -126,6 +142,8 @@ const ContactSection = () => {
                   <button
                     onClick={() => {
                       setSubmitted(false);
+                      setConsent(false);
+                      setConsentError(false);
                       setFormData({ name: "", email: "", phone: "", eventType: "", date: "", location: "", message: "" });
                     }}
                     className="mt-8 font-body text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground border-b border-border hover:border-foreground/30 pb-1 transition-colors"
@@ -218,6 +236,59 @@ const ContactSection = () => {
                   onChange={handleChange}
                   className={inputClasses + " resize-none mt-2"}
                 />
+
+                <div className="mt-6 rounded-sm border border-border/70 bg-secondary/10 px-4 py-3">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="privacyConsent"
+                      checked={consent}
+                      onChange={(e) => {
+                        setConsent(e.target.checked);
+                        if (e.target.checked) setConsentError(false);
+                      }}
+                      className="mt-1 h-4 w-4 shrink-0 accent-foreground"
+                      aria-describedby={consentError ? "privacy-consent-error" : undefined}
+                    />
+                    <span className="font-body text-xs leading-relaxed text-muted-foreground">
+                      {t("contact.consentPrefix")} {" "}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button
+                            type="button"
+                            className="text-foreground underline underline-offset-4 hover:text-foreground/70"
+                          >
+                            {t("contact.consentLink")}
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto text-left">
+                          <DialogHeader>
+                            <DialogTitle className="font-display text-2xl font-800">
+                              {t("privacy.title")}
+                            </DialogTitle>
+                            <DialogDescription>{t("privacy.intro", { brand: BRAND_NAME })}</DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-5 font-body text-sm leading-relaxed text-muted-foreground">
+                            {([1, 2, 3, 4, 5] as const).map((section) => (
+                              <section key={section}>
+                                <h3 className="mb-1 font-display font-700 text-foreground">
+                                  {t(`privacy.${section}.title`)}
+                                </h3>
+                                <p className="whitespace-pre-line">{t(`privacy.${section}.body`, { brand: BRAND_NAME })}</p>
+                              </section>
+                            ))}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      {t("contact.consentSuffix")}
+                    </span>
+                  </label>
+                  {consentError && (
+                    <p id="privacy-consent-error" role="alert" className="mt-2 pl-7 font-body text-xs text-red-300">
+                      {t("contact.consentError")}
+                    </p>
+                  )}
+                </div>
 
                 <button
                   type="submit"
